@@ -44,7 +44,9 @@ data/
 
 # Build artifacts
 *.exe
-*.spec
+
+# Zuo.spec should be tracked
+!Zuo.spec
 
 # OS
 .DS_Store
