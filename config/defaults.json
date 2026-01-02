@@ -1,0 +1,116 @@
+{
+  "categories": {
+    "Housing": [
+      "Mortgage",
+      "Special Assessment",
+      "Additional Principal",
+      "Escrow",
+      "HOA",
+      "Reserves",
+      "Condo Insurance",
+      "Property Taxes",
+      "Labor",
+      "Rent"
+    ],
+    "Utilities": [
+      "Internet",
+      "Electric",
+      "Cell Phone",
+      "Car Insurance",
+      "Insurance",
+      "Transit",
+      "Bus Pass",
+      "Misc Utility"
+    ],
+    "Food": [
+      "Groceries",
+      "Take Out",
+      "Dining Out",
+      "Other",
+      "Party",
+      "Guests",
+      "Work",
+      "Special Occasion"
+    ],
+    "Healthcare": [
+      "Primary Care",
+      "Prescriptions",
+      "Vitamins",
+      "Specialists",
+      "Haircut",
+      "Hygiene",
+      "Family",
+      "Co-Pay",
+      "Subscriptions",
+      "Misc Healthcare"
+    ],
+    "Childcare": [
+      "Classes",
+      "Baby Sitting",
+      "Clothing",
+      "Diapers",
+      "Necessities",
+      "Accessories",
+      "Toys",
+      "Food/Snacks",
+      "Haircut",
+      "Activities",
+      "Rideshare",
+      "Misc"
+    ],
+    "Vehicles": [
+      "Repairs",
+      "Other",
+      "Gas",
+      "DMV",
+      "Parts",
+      "Tires",
+      "Insurance",
+      "Oil Changes",
+      "Car Wash",
+      "Parking",
+      "Tolls"
+    ],
+    "Home": [
+      "Necessities",
+      "Décor",
+      "Cleaning",
+      "Bathroom",
+      "Bedrooms",
+      "Kitchen",
+      "Tools/Hardware",
+      "Storage",
+      "Homeware",
+      "Subscriptions"
+    ],
+    "Other": [
+      "Gifts",
+      "Taxes",
+      "Donations",
+      "Gatherings",
+      "Parties",
+      "Clothes",
+      "Shoes",
+      "Pets",
+      "Subscriptions",
+      "Fees",
+      "Reversal",
+      "Entertainment",
+      "Other"
+    ],
+    "Vacation": [
+      "Flights/Travel",
+      "Rental Car",
+      "Airport",
+      "Taxi",
+      "Food",
+      "Eating Out",
+      "Gas",
+      "Activities",
+      "Lodging",
+      "Fees",
+      "Shopping",
+      "Necessities"
+    ]
+  }
+}

@@ -3,7 +3,7 @@
 Budget Tracker Application - Main Entry Point
 ================================================
 
-This is the main entry point for the Jeff & Vanessa Budget Tracker application.
+This is the main entry point for the Zuo Budget Tracker application.
 A comprehensive PyQt6-based personal finance management tool that provides:
 
 Features:
@@ -25,7 +25,6 @@ Dependencies:
     - SQLite3: For database operations (built into Python)
     - Additional dependencies listed in requirements.txt
 
-Author: Jeff & Vanessa
 Version: 1.0
 """
 
@@ -69,8 +68,8 @@ def main():
 
     # Set application metadata for proper OS integration
     # This affects window titles, system tray integration, and file associations5
-    app.setApplicationName("Budget Tracker")
-    app.setOrganizationName("Jeff & Vanessa")
+    app.setApplicationName("Zuo")
+    app.setOrganizationName("Zuo")
     
     # Create the main application window
     # BudgetApp is the primary window containing all tabs and functionality

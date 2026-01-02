@@ -20,7 +20,7 @@ from gui.utils.styles import get_app_stylesheet
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Budget Tracker - Jeff & Vanessa")
+        self.setWindowTitle("Zuo - Budget Tracker")
         self.setGeometry(100, 100, 1400, 800)
         
         # Set up central widget and layout
@@ -129,9 +129,8 @@ class MainWindow(QMainWindow):
         """Show about dialog"""
         QMessageBox.about(
             self,
-            "About Budget Tracker",
-            "Budget Tracker v1.0\n\n"
-            "A comprehensive budget management application\n"
-            "for Jeff & Vanessa\n\n"
+            "About Zuo Budget Tracker",
+            "Zuo Budget Tracker v1.0\n\n"
+            "A comprehensive budget management application\n\n"
             "© 2024 All rights reserved"
         )

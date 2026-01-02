@@ -667,7 +667,7 @@ class TrendsTab(QWidget):
             # Query net_worth_snapshots table for historical data
             self.db_manager.connect()
             query = '''
-                SELECT date, jeff_total, vanessa_total, joint_total, total_net_worth
+                SELECT date, user_a_total, user_b_total, joint_total, total_net_worth
                 FROM net_worth_snapshots
                 WHERE date >= ? AND date <= ?
                 ORDER BY date ASC
@@ -682,8 +682,8 @@ class TrendsTab(QWidget):
             for row in result.fetchall():
                 snapshots.append({
                     'date': row['date'],
-                    'jeff_total': row['jeff_total'] or 0,
-                    'vanessa_total': row['vanessa_total'] or 0,
+                    'user_a_total': row['user_a_total'] or 0,
+                    'user_b_total': row['user_b_total'] or 0,
                     'joint_total': row['joint_total'] or 0,
                     'total_net_worth': row['total_net_worth'] or 0
                 })
@@ -1059,8 +1059,8 @@ class TrendsTab(QWidget):
             # Add data points
             for i, snapshot in enumerate(snapshots):
                 total_series.append(i, snapshot['total_net_worth'])
-                jeff_series.append(i, snapshot['jeff_total'])
-                vanessa_series.append(i, snapshot['vanessa_total'])
+                jeff_series.append(i, snapshot['user_a_total'])
+                vanessa_series.append(i, snapshot['user_b_total'])
                 joint_series.append(i, snapshot['joint_total'])
 
             # Add series to chart
