@@ -426,9 +426,54 @@ class DatabaseManager:
 
         # Load default categories from predefined list
         self.load_default_categories()
+        
+        # Run column name migration if needed
+        self.migrate_column_names()
 
         # Close connection to free resources
         self.disconnect()
+    
+    def migrate_column_names(self):
+        """
+        Migrate old personal column names to generic names.
+        
+        This method checks if the old column names (jeff_total, vanessa_total)
+        exist in the net_worth_snapshots table and renames them to generic
+        names (user_a_total, user_b_total) for privacy.
+        """
+        try:
+            # Check if table exists
+            result = self.cursor.execute("""
+                SELECT name FROM sqlite_master 
+                WHERE type='table' AND name='net_worth_snapshots'
+            """).fetchone()
+            
+            if not result:
+                return  # Table doesn't exist yet
+            
+            # Get existing columns
+            self.cursor.execute("PRAGMA table_info(net_worth_snapshots)")
+            columns = {col[1] for col in self.cursor.fetchall()}
+            
+            # Migrate jeff_total to user_a_total if needed
+            if 'jeff_total' in columns and 'user_a_total' not in columns:
+                self.cursor.execute("""
+                    ALTER TABLE net_worth_snapshots 
+                    RENAME COLUMN jeff_total TO user_a_total
+                """)
+            
+            # Migrate vanessa_total to user_b_total if needed
+            if 'vanessa_total' in columns and 'user_b_total' not in columns:
+                self.cursor.execute("""
+                    ALTER TABLE net_worth_snapshots 
+                    RENAME COLUMN vanessa_total TO user_b_total
+                """)
+            
+            self.conn.commit()
+            
+        except Exception as e:
+            # If migration fails, it's not critical - just log it
+            print(f"Note: Column migration skipped or already complete: {e}")
 
     def load_default_categories(self):
         """

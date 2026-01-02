@@ -37,6 +37,9 @@ from PyQt6.QtCore import Qt
 # This ensures the application can find all modules regardless of
 # where it's executed from
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from config import load_settings
+from gui.views.onboarding import OnboardingWizard
 from app import BudgetApp
 
 def main():
@@ -70,6 +73,15 @@ def main():
     # This affects window titles, system tray integration, and file associations5
     app.setApplicationName("Zuo")
     app.setOrganizationName("Zuo")
+    
+    # Check if onboarding is needed
+    settings = load_settings()
+    if not settings.get("onboarding_completed", False):
+        # Show onboarding wizard
+        wizard = OnboardingWizard()
+        if wizard.exec() != wizard.DialogCode.Accepted:
+            # User cancelled onboarding - exit application
+            return 0
     
     # Create the main application window
     # BudgetApp is the primary window containing all tabs and functionality
