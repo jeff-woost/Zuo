@@ -1,0 +1,35 @@
+# PyQt6 for GUI framework
+PyQt6==6.7.1
+
+# Database (SQLite is included with Python, but these are helpful for advanced features)
+sqlite3  # Built into Python standard library
+
+# Data handling and analysis
+pandas==2.2.2
+numpy==1.26.4
+
+# Date and time handling
+python-dateutil==2.9.0
+
+# For CSV file handling (built into Python but listed for clarity)
+csv  # Built into Python standard library
+
+# Optional: For enhanced data visualization in trends
+matplotlib==3.8.4
+plotly==5.17.0
+
+# Optional: For data export functionality
+openpyxl==3.1.2
+xlsxwriter==3.1.9
+
+# Optional: For backup and data management
+pathlib  # Built into Python standard library
+shutil   # Built into Python standard library
+json     # Built into Python standard library
+
+# Development and testing (optional)
+pytest==8.2.2
+pytest-qt==4.4.0
+
+# Optional: For enhanced file dialogs
+Send2Trash==1.8.3
