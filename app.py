@@ -79,7 +79,7 @@ class BudgetApp(QMainWindow):
         super().__init__()
 
         # Configure main window properties
-        self.setWindowTitle("Jeff & Vanessa Budget Tracker")
+        self.setWindowTitle("Zuo - Budget Tracker")
         # Set window size: width=1400px, height=800px for comfortable viewing
         # Position: x=100, y=100 offset from top-left corner
         self.setGeometry(100, 100, 1400, 800)

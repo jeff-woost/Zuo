@@ -10,6 +10,7 @@ from PyQt6.QtCore import Qt, QDate
 from PyQt6.QtGui import QFont
 from datetime import datetime
 from database.db_manager import DatabaseManager
+from config import get_user_names
 
 class OverviewTab(QWidget):
     def __init__(self):
@@ -22,6 +23,9 @@ class OverviewTab(QWidget):
     def init_ui(self):
         """Initialize the UI"""
         layout = QVBoxLayout()
+        
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
         
         # Header with month selector
         header_layout = QHBoxLayout()
@@ -69,16 +73,16 @@ class OverviewTab(QWidget):
         
         # Income Summary Card
         self.income_group = self.create_summary_card("💵 Income", [
-            ("Jeff's Income:", "$0.00"),
-            ("Vanessa's Income:", "$0.00"),
+            (f"{user_a_name}'s Income:", "$0.00"),
+            (f"{user_b_name}'s Income:", "$0.00"),
             ("Total Income:", "$0.00")
         ])
         content_layout.addWidget(self.income_group, 0, 0)
         
         # Expense Summary Card
         self.expense_group = self.create_summary_card("💳 Expenses", [
-            ("Jeff's Expenses:", "$0.00"),
-            ("Vanessa's Expenses:", "$0.00"),
+            (f"{user_a_name}'s Expenses:", "$0.00"),
+            (f"{user_b_name}'s Expenses:", "$0.00"),
             ("Total Expenses:", "$0.00")
         ])
         content_layout.addWidget(self.expense_group, 0, 1)

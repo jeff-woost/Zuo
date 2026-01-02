@@ -37,6 +37,14 @@ from datetime import datetime
 from typing import List, Dict, Tuple, Optional
 import json
 import threading
+import sys
+
+# Add config module to path if not already there
+config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config')
+if config_path not in sys.path:
+    sys.path.insert(0, config_path)
+
+from config import load_defaults
 
 class DatabaseManager:
     """
@@ -405,8 +413,8 @@ class DatabaseManager:
             CREATE TABLE IF NOT EXISTS net_worth_snapshots (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 date DATE NOT NULL UNIQUE,
-                jeff_total REAL,
-                vanessa_total REAL,
+                user_a_total REAL,
+                user_b_total REAL,
                 joint_total REAL,
                 total_net_worth REAL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -418,147 +426,73 @@ class DatabaseManager:
 
         # Load default categories from predefined list
         self.load_default_categories()
+        
+        # Run column name migration if needed
+        self.migrate_column_names()
 
         # Close connection to free resources
         self.disconnect()
+    
+    def migrate_column_names(self):
+        """
+        Migrate old personal column names to generic names.
+        
+        This method checks if the old column names (jeff_total, vanessa_total)
+        exist in the net_worth_snapshots table and renames them to generic
+        names (user_a_total, user_b_total) for privacy.
+        """
+        try:
+            # Check if table exists
+            result = self.cursor.execute("""
+                SELECT name FROM sqlite_master 
+                WHERE type='table' AND name='net_worth_snapshots'
+            """).fetchone()
+            
+            if not result:
+                return  # Table doesn't exist yet
+            
+            # Get existing columns
+            self.cursor.execute("PRAGMA table_info(net_worth_snapshots)")
+            columns = {col[1] for col in self.cursor.fetchall()}
+            
+            # Migrate jeff_total to user_a_total if needed
+            if 'jeff_total' in columns and 'user_a_total' not in columns:
+                self.cursor.execute("""
+                    ALTER TABLE net_worth_snapshots 
+                    RENAME COLUMN jeff_total TO user_a_total
+                """)
+            
+            # Migrate vanessa_total to user_b_total if needed
+            if 'vanessa_total' in columns and 'user_b_total' not in columns:
+                self.cursor.execute("""
+                    ALTER TABLE net_worth_snapshots 
+                    RENAME COLUMN vanessa_total TO user_b_total
+                """)
+            
+            self.conn.commit()
+            
+        except Exception as e:
+            # If migration fails, it's not critical - just log it
+            print(f"Note: Column migration skipped or already complete: {e}")
 
     def load_default_categories(self):
         """
-        Load predefined expense categories and subcategories.
-
-        This method populates the categories table with a comprehensive
-        set of expense categories and subcategories commonly used in
-        personal finance tracking. Categories are organized by major
-        expense types like Housing, Food, Healthcare, etc.
-
-        The categories are designed to provide detailed expense tracking
-        while maintaining logical groupings for analysis and reporting.
+        Load predefined expense categories and subcategories from config.
+        
+        This method populates the categories table with categories
+        loaded from the config/defaults.json file, providing flexibility
+        and easy customization of expense categories.
         """
-        # Comprehensive list of expense categories and subcategories
-        # Organized by major spending areas for personal finance tracking
-        categories = [
-            # Housing-related expenses
-            ("Housing", "Mortgage"),
-            ("Housing", "Special Assessment"),
-            ("Housing", "Additional Principal"),
-            ("Housing", "Lima Apartment Wires"),
-            ("Housing", "Lima Apartment Fees"),
-            ("Housing", "Escrow"),
-            ("Housing", "HOA"),
-            ("Housing", "Reserves"),
-            ("Housing", "Condo Insurance"),
-            ("Housing", "Property Taxes"),
-            ("Housing", "Labor"),
-
-            # Utility expenses
-            ("Utilities", "Optimum"),
-            ("Utilities", "PSEG"),
-            ("Utilities", "Cell Phone"),
-            ("Utilities", "Car Insurance"),
-            ("Utilities", "Gloria"),
-            ("Utilities", "Insurance"),
-            ("Utilities", "Taxi / Transit"),
-            ("Utilities", "Bus Pass"),
-            ("Utilities", "Misc Utility"),
-
-            # Food and dining expenses
-            ("Food", "Food (Groceries)"),
-            ("Food", "Food (Take Out)"),
-            ("Food", "Food (Dining Out)"),
-            ("Food", "Food (Other)"),
-            ("Food", "Food (Party)"),
-            ("Food", "Food (Guests)"),
-            ("Food", "Food (Work)"),
-            ("Food", "Food (Special Occasion)"),
-
-            # Healthcare expenses
-            ("Healthcare", "Jeff Doctor"),
-            ("Healthcare", "Prescriptions"),
-            ("Healthcare", "Vitamins"),
-            ("Healthcare", "Other Doctor Visits"),
-            ("Healthcare", "Haircut"),
-            ("Healthcare", "Hygenie"),
-            ("Healthcare", "Family"),
-            ("Healthcare", "Fertility"),
-            ("Healthcare", "Co-Pay"),
-            ("Healthcare", "Baker"),
-            ("Healthcare", "HC Subscriptions"),
-            ("Healthcare", "Joaquin Health Care"),
-            ("Healthcare", "Zoe Health Care"),
-            ("Healthcare", "Misc Health Care"),
-
-            # Childcare expenses
-            ("Childcare", "Village Classes"),
-            ("Childcare", "Baby Sitting"),
-            ("Childcare", "Clothing"),
-            ("Childcare", "Diapers"),
-            ("Childcare", "Necessities"),
-            ("Childcare", "Accessories"),
-            ("Childcare", "Toys"),
-            ("Childcare", "Food / Snacks"),
-            ("Childcare", "Haircut"),
-            ("Childcare", "Activities"),
-            ("Childcare", "Uber / Lyft"),
-            ("Childcare", "Misc."),
-
-            # Vehicle expenses
-            ("Vehicles", "Vehicle Fixes"),
-            ("Vehicles", "Vehicle Other"),
-            ("Vehicles", "Gas"),
-            ("Vehicles", "DMV"),
-            ("Vehicles", "Parts"),
-            ("Vehicles", "Tires / Wheels"),
-            ("Vehicles", "Insurance"),
-            ("Vehicles", "Oil Changes"),
-            ("Vehicles", "Car Wash"),
-            ("Vehicles", "Parking"),
-            ("Vehicles", "Tolls"),
-
-            # Home maintenance and improvement
-            ("Home", "Home Necessities"),
-            ("Home", "Home Décor"),
-            ("Home", "House Cleaning"),
-            ("Home", "Bathroom"),
-            ("Home", "Bedrooms"),
-            ("Home", "Kitchen"),
-            ("Home", "Tools / Hardware"),
-            ("Home", "Storage"),
-            ("Home", "Homeware"),
-            ("Home", "Subscriptions"),
-
-            # Miscellaneous expenses
-            ("Other", "Gifts"),
-            ("Other", "Taxes"),
-            ("Other", "Donations"),
-            ("Other", "Gatherings"),
-            ("Other", "Parties"),
-            ("Other", "Clothes"),
-            ("Other", "Shoes"),
-            ("Other", "Pets"),
-            ("Other", "Target AutoPay"),
-            ("Other", "Stupid Tax"),
-            ("Other", "Amazon Prime"),
-            ("Other", "Fees"),
-            ("Other", "Reversal"),
-            ("Other", "Entertainment"),
-            ("Other", "Other"),
-
-            # Vacation and travel expenses
-            ("Vacation", "Flights/Travel"),
-            ("Vacation", "Rental Car"),
-            ("Vacation", "Airport"),
-            ("Vacation", "Taxi"),
-            ("Vacation", "Food"),
-            ("Vacation", "Eating Out"),
-            ("Vacation", "Gas"),
-            ("Vacation", "Activities"),
-            ("Vacation", "Bedding"),
-            ("Vacation", "Fees"),
-            ("Vacation", "Physical Goods"),
-            ("Vacation", "Housing"),
-            ("Vacation", "Necessities")
-        ]
-
+        # Load categories from JSON configuration
+        defaults = load_defaults()
+        categories_dict = defaults.get("categories", {})
+        
+        # Convert dictionary to list of tuples for insertion
+        categories = []
+        for category, subcategories in categories_dict.items():
+            for subcategory in subcategories:
+                categories.append((category, subcategory))
+        
         # Insert categories using INSERT OR IGNORE to prevent duplicates
         for category, subcategory in categories:
             try:
