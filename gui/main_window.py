@@ -40,12 +40,12 @@ class MainWindow(QMainWindow):
         self.savings_tab = SavingsTab()
         self.trends_tab = TrendsTab()
         
-        self.tabs.addTab(self.overview_tab, "📊 Budget Overview")
-        self.tabs.addTab(self.net_worth_tab, "💰 Net Worth")
-        self.tabs.addTab(self.budget_tab, "📝 Budget")
-        self.tabs.addTab(self.presentation_tab, "📈 Monthly Presentation")
-        self.tabs.addTab(self.savings_tab, "🎯 Savings Goals")
-        self.tabs.addTab(self.trends_tab, "📉 Trends")
+        self.tabs.addTab(self.overview_tab, "Budget Overview")
+        self.tabs.addTab(self.net_worth_tab, "Net Worth")
+        self.tabs.addTab(self.budget_tab, "Budget")
+        self.tabs.addTab(self.presentation_tab, "Monthly Presentation")
+        self.tabs.addTab(self.savings_tab, "Savings Goals")
+        self.tabs.addTab(self.trends_tab, "Trends")
         
         # Connect tab change signal
         self.tabs.currentChanged.connect(self.on_tab_changed)
