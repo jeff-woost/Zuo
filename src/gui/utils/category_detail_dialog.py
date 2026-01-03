@@ -706,17 +706,18 @@ class CategoryDetailDialog(QDialog):
             summary_layout.addWidget(variance_label)
 
         else:  # budget_vs_actual
+            user_a, user_b = get_user_names()
             estimate_label = QLabel(f"Total Estimate: ${totals['estimate']:,.2f}")
             estimate_label.setStyleSheet("font-weight: bold; color: #2c5530; font-size: 14px;")
             summary_layout.addWidget(estimate_label)
 
-            jeff_label = QLabel(f"Jeff: ${totals['jeff']:,.2f}")
-            jeff_label.setStyleSheet("font-weight: bold; color: #ff9800; font-size: 14px;")
-            summary_layout.addWidget(jeff_label)
+            user_a_label = QLabel(f"{user_a}: ${totals['jeff']:,.2f}")
+            user_a_label.setStyleSheet("font-weight: bold; color: #ff9800; font-size: 14px;")
+            summary_layout.addWidget(user_a_label)
 
-            vanessa_label = QLabel(f"Vanessa: ${totals['vanessa']:,.2f}")
-            vanessa_label.setStyleSheet("font-weight: bold; color: #9c27b0; font-size: 14px;")
-            summary_layout.addWidget(vanessa_label)
+            user_b_label = QLabel(f"{user_b}: ${totals['vanessa']:,.2f}")
+            user_b_label.setStyleSheet("font-weight: bold; color: #9c27b0; font-size: 14px;")
+            summary_layout.addWidget(user_b_label)
 
             actual_label = QLabel(f"Total Actual: ${totals['actual']:,.2f}")
             actual_label.setStyleSheet("font-weight: bold; color: #d32f2f; font-size: 14px;")

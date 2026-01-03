@@ -151,16 +151,24 @@ class CategoryManager:
         - And many more...
         """
         self._categories_data = {
-            'Housing': ['Mortgage', 'HOA', 'Property Taxes', 'Reserves', 'Special Assessment', 'Additional Principal', 'Lima Apartment Wires', 'Lima Apartment Fees', 'Escrow', 'Condo Insurance', 'Labor'],
-            'Utilities': ['Electric', 'Gas', 'Internet', 'Phone', 'Insurance', 'Optimum', 'PSEG', 'Cell Phone', 'Car Insurance', 'Gloria', 'Taxi / Transit', 'Bus Pass', 'Misc Utility'],
-            'Food': ['Food (Groceries)', 'Food (Take Out)', 'Food (Dining Out)', 'Food (Other)', 'Food (Party)', 'Food (Guests)', 'Food (Work)', 'Food (Special Occasion)'],
-            'Healthcare': ['Prescriptions', 'Doctor Visits', 'Co-Pay', 'Jeff Doctor', 'Vitamins', 'Other Doctor Visits', 'Haircut', 'Hygenie', 'Family', 'Fertility', 'Baker', 'HC Subscriptions', 'Joaquin Health Care', 'Zoe Health Care', 'Misc Health Care', 'Misc Healthcare'],
-            'Childcare': ['Village Classes', 'Baby Sitting', 'Clothing', 'Diapers', 'Necessities', 'Accessories', 'Toys', 'Food / Snacks', 'Haircut', 'Activities', 'Uber / Lyft', 'Misc.'],
-            'Vehicles': ['Gas', 'Insurance', 'Repairs', 'Parking', 'Vehicle Fixes', 'Vehicle Other', 'DMV', 'Parts', 'Tires / Wheels', 'Oil Changes', 'Car Wash', 'Tolls'],
-            'Home': ['Home Necessities', 'Home Décor', 'House Cleaning', 'Bathroom', 'Bedrooms', 'Kitchen', 'Tools / Hardware', 'Storage', 'Homeware', 'Subscriptions'],
-            'Other': ['Entertainment', 'Clothes', 'Clothing', 'Other', 'Gifts', 'Taxes', 'Donations', 'Gatherings', 'Parties', 'Shoes', 'Pets', 'Target AutoPay', 'Stupid Tax', 'Amazon Prime', 'Fees', 'Reversal'],
-            'Vacation': ['Flights/Travel', 'Rental Car', 'Airport', 'Taxi', 'Food', 'Eating Out', 'Gas', 'Activities', 'Bedding', 'Fees', 'Physical Goods', 'Housing', 'Necessities'],
-            'Income': ["Jeff's Income", "Vanessa's Income", "Bonus", "Other Income"]
+            'Housing': ['Rent/Mortgage', 'Property Tax', 'HOA Fees', 'Home Insurance', 'Maintenance', 'Repairs', 'Special Assessment', 'Additional Principal', 'Escrow', 'Reserves', 'Labor'],
+            'Utilities': ['Electric', 'Gas', 'Water', 'Internet', 'Phone', 'Cable/Streaming', 'Cell Phone', 'Transit', 'Bus Pass'],
+            'Transportation': ['Car Payment', 'Gas/Fuel', 'Insurance', 'Maintenance', 'Public Transit', 'Parking', 'Tolls', 'Rideshare', 'Repairs', 'DMV', 'Parts', 'Tires', 'Oil Changes', 'Car Wash'],
+            'Food & Dining': ['Groceries', 'Restaurants', 'Coffee Shops', 'Food Delivery', 'Work Meals', 'Take Out', 'Dining Out', 'Party', 'Guests', 'Special Occasion'],
+            'Healthcare': ['Insurance Premiums', 'Doctor Visits', 'Prescriptions', 'Dental', 'Vision', 'Mental Health', 'Primary Care', 'Specialists', 'Vitamins', 'Co-Pay', 'Medical Subscriptions', 'Hygiene', 'Family', 'Haircut'],
+            'Insurance': ['Life Insurance', 'Disability', 'Umbrella Policy', 'Home Insurance', 'Car Insurance'],
+            'Debt Payments': ['Credit Cards', 'Student Loans', 'Personal Loans'],
+            'Savings & Investments': ['Emergency Fund', 'Retirement (401k/IRA)', 'Brokerage', 'HSA/FSA'],
+            'Personal': ['Clothing', 'Haircuts', 'Gym/Fitness', 'Subscriptions', 'Hobbies', 'Shoes', 'Beauty/Grooming'],
+            'Family & Children': ['Childcare', 'Education', 'Activities', 'Supplies', 'Classes', 'Baby Sitting', 'Children\'s Clothing', 'Diapers', 'Toys', 'Food/Snacks'],
+            'Entertainment': ['Movies', 'Events', 'Gaming', 'Sports', 'Vacations', 'Streaming Services', 'Concerts', 'Hobbies'],
+            'Gifts & Donations': ['Gifts', 'Charitable Donations', 'Religious Giving', 'Gatherings', 'Parties'],
+            'Business': ['Office Supplies', 'Software', 'Professional Services', 'Travel', 'Business Meals'],
+            'Pets': ['Pet Food', 'Veterinary', 'Pet Supplies', 'Grooming', 'Pet Insurance'],
+            'Home & Garden': ['Home Necessities', 'Home Décor', 'House Cleaning', 'Bathroom', 'Bedrooms', 'Kitchen', 'Tools/Hardware', 'Storage', 'Homeware', 'Garden Supplies'],
+            'Vacation & Travel': ['Flights/Travel', 'Rental Car', 'Airport', 'Taxi', 'Food', 'Eating Out', 'Gas', 'Activities', 'Lodging', 'Fees', 'Shopping', 'Necessities'],
+            'Miscellaneous': ['Other', 'Uncategorized', 'Cash Withdrawals', 'Fees', 'Reversal', 'Taxes'],
+            'Income': ['Primary Salary', 'Secondary Salary', 'Bonus', 'Investment Income', 'Side Hustle', 'Other Income']
         }
 
     def _ensure_categories_table(self):
@@ -390,6 +398,187 @@ class CategoryManager:
         except Exception as e:
             print(f"Error removing subcategory {category}/{subcategory}: {e}")
             return False
+
+    def rename_category(self, old_name: str, new_name: str) -> bool:
+        """
+        Rename an existing category.
+        
+        This updates the category name in both the database and in-memory cache,
+        and also updates all expenses using this category.
+        
+        Args:
+            old_name (str): Current category name
+            new_name (str): New category name
+            
+        Returns:
+            bool: True if renamed successfully, False otherwise
+        """
+        if not old_name or not new_name:
+            return False
+            
+        if old_name not in self._categories_data:
+            return False
+            
+        if new_name in self._categories_data:
+            print(f"Cannot rename: Category '{new_name}' already exists")
+            return False
+            
+        try:
+            with DatabaseManager() as db:
+                # Update all expenses using this category
+                db.execute('''
+                    UPDATE expenses 
+                    SET category = ? 
+                    WHERE category = ?
+                ''', (new_name, old_name))
+                
+                # Update all budget estimates using this category
+                db.execute('''
+                    UPDATE budget_estimates 
+                    SET category = ? 
+                    WHERE category = ?
+                ''', (new_name, old_name))
+                
+                # Update categories table
+                db.execute('''
+                    UPDATE categories 
+                    SET category = ? 
+                    WHERE category = ?
+                ''', (new_name, old_name))
+                
+                # Update in-memory storage
+                self._categories_data[new_name] = self._categories_data.pop(old_name)
+                return True
+                
+        except Exception as e:
+            print(f"Error renaming category {old_name} to {new_name}: {e}")
+            return False
+
+    def rename_subcategory(self, category: str, old_name: str, new_name: str) -> bool:
+        """
+        Rename an existing subcategory.
+        
+        This updates the subcategory name in both the database and in-memory cache,
+        and also updates all expenses using this subcategory.
+        
+        Args:
+            category (str): The main category
+            old_name (str): Current subcategory name
+            new_name (str): New subcategory name
+            
+        Returns:
+            bool: True if renamed successfully, False otherwise
+        """
+        if not category or not old_name or not new_name:
+            return False
+            
+        if category not in self._categories_data:
+            return False
+            
+        if old_name not in self._categories_data[category]:
+            return False
+            
+        if new_name in self._categories_data[category]:
+            print(f"Cannot rename: Subcategory '{new_name}' already exists in '{category}'")
+            return False
+            
+        try:
+            with DatabaseManager() as db:
+                # Update all expenses using this subcategory
+                db.execute('''
+                    UPDATE expenses 
+                    SET subcategory = ? 
+                    WHERE category = ? AND subcategory = ?
+                ''', (new_name, category, old_name))
+                
+                # Update all budget estimates using this subcategory
+                db.execute('''
+                    UPDATE budget_estimates 
+                    SET subcategory = ? 
+                    WHERE category = ? AND subcategory = ?
+                ''', (new_name, category, old_name))
+                
+                # Update categories table
+                db.execute('''
+                    UPDATE categories 
+                    SET subcategory = ? 
+                    WHERE category = ? AND subcategory = ?
+                ''', (new_name, category, old_name))
+                
+                # Update in-memory storage
+                idx = self._categories_data[category].index(old_name)
+                self._categories_data[category][idx] = new_name
+                return True
+                
+        except Exception as e:
+            print(f"Error renaming subcategory {category}/{old_name} to {new_name}: {e}")
+            return False
+
+    def delete_category(self, category: str) -> bool:
+        """
+        Delete a category (only if not used by any expenses).
+        
+        This method checks if the category is being used in any existing
+        expense records. Categories that are in use cannot be deleted to
+        maintain data integrity.
+        
+        Args:
+            category (str): The category to delete
+            
+        Returns:
+            bool: True if deleted successfully, False if in use or error occurred
+        """
+        if category not in self._categories_data:
+            return False
+            
+        try:
+            with DatabaseManager() as db:
+                # Check if category is used in expenses
+                usage_count = db.execute('''
+                    SELECT COUNT(*) as count FROM expenses
+                    WHERE category = ?
+                ''', (category,)).fetchone()
+                
+                if usage_count and usage_count['count'] > 0:
+                    print(f"Cannot delete category '{category}': still in use by {usage_count['count']} expense(s)")
+                    return False
+                
+                # Check if category is used in budget estimates
+                budget_count = db.execute('''
+                    SELECT COUNT(*) as count FROM budget_estimates
+                    WHERE category = ?
+                ''', (category,)).fetchone()
+                
+                if budget_count and budget_count['count'] > 0:
+                    print(f"Cannot delete category '{category}': still in use by {budget_count['count']} budget estimate(s)")
+                    return False
+                
+                # Remove from database
+                db.execute('''
+                    DELETE FROM categories 
+                    WHERE category = ?
+                ''', (category,))
+                
+                # Remove from in-memory storage
+                del self._categories_data[category]
+                return True
+                
+        except Exception as e:
+            print(f"Error deleting category {category}: {e}")
+            return False
+
+    def delete_subcategory(self, category: str, subcategory: str) -> bool:
+        """
+        Delete a subcategory (alias for remove_subcategory for consistency).
+        
+        Args:
+            category (str): The main category
+            subcategory (str): The subcategory to delete
+            
+        Returns:
+            bool: True if deleted successfully, False otherwise
+        """
+        return self.remove_subcategory(category, subcategory)
 
     def refresh_from_database(self):
         """

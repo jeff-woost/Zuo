@@ -2,12 +2,13 @@
 Main window for the budget application
 """
 
+import os
 from PyQt6.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout,
-    QMenuBar, QMenu, QStatusBar, QMessageBox, QDialog, QLabel
+    QMenuBar, QMenu, QStatusBar, QMessageBox, QDialog, QLabel, QHBoxLayout
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction, QIcon, QPixmap
+from PyQt6.QtGui import QAction, QIcon, QPixmap, QFont
 
 from src.gui.tabs.overview_tab import OverviewTab
 from src.gui.tabs.net_worth_tab import NetWorthTab
@@ -22,6 +23,11 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Zuo - Budget Tracker")
         self.setGeometry(100, 100, 1400, 800)
+        
+        # Set window icon
+        icon_path = os.path.join(os.path.dirname(__file__), "resources", "zuo_logo.png")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
         
         # Set up central widget and layout
         central_widget = QWidget()

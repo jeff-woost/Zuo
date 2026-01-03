@@ -898,11 +898,12 @@ class PresentationTab(QWidget):
             ORDER BY category, subcategory, person
         ''', (month_start, month_end))
 
+        user_a, user_b = get_user_names()
         actual_expenses = {}
         for row in cursor.fetchall():
             key = (row['category'], row['subcategory'])
             if key not in actual_expenses:
-                actual_expenses[key] = {'Jeff': 0, 'Vanessa': 0}
+                actual_expenses[key] = {user_a: 0, user_b: 0}
             actual_expenses[key][row['person']] = row['total']
 
         # Get budget estimates instead of budget targets
@@ -1032,24 +1033,25 @@ class PresentationTab(QWidget):
         """)
 
         # Create table for this category
+        user_a, user_b = get_user_names()
         table = QTableWidget()
         table.setColumnCount(6)
         table.setHorizontalHeaderLabels([
-            "Subcategory", "Estimate", "Jeff's Expenses", "Vanessa's Expenses", "Total Actual", "Variance"
+            "Subcategory", "Estimate", f"{user_a}'s Expenses", f"{user_b}'s Expenses", "Total Actual", "Variance"
         ])
 
         # Set column widths
         header = table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)  # Subcategory
         header.setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)    # Estimate
-        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)    # Jeff
-        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)    # Vanessa
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)    # User A
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)    # User B
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)    # Total
         header.setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)    # Variance
 
         table.setColumnWidth(1, 100)  # Estimate
-        table.setColumnWidth(2, 120)  # Jeff
-        table.setColumnWidth(3, 120)  # Vanessa
+        table.setColumnWidth(2, 120)  # User A
+        table.setColumnWidth(3, 120)  # User B
         table.setColumnWidth(4, 100)  # Total
         table.setColumnWidth(5, 100)  # Variance
 
@@ -1093,21 +1095,21 @@ class PresentationTab(QWidget):
             table.setItem(i, 1, QTableWidgetItem(f"${estimate:,.2f}"))
 
             # Get actual expenses
-            jeff_actual = actual_expenses.get(key, {}).get('Jeff', 0)
-            vanessa_actual = actual_expenses.get(key, {}).get('Vanessa', 0)
-            total_actual = jeff_actual + vanessa_actual
+            user_a_actual = actual_expenses.get(key, {}).get(user_a, 0)
+            user_b_actual = actual_expenses.get(key, {}).get(user_b, 0)
+            total_actual = user_a_actual + user_b_actual
 
-            # Jeff's expenses
-            jeff_item = QTableWidgetItem(f"${jeff_actual:,.2f}")
-            if jeff_actual > 0:
-                jeff_item.setForeground(QColor(200, 50, 50))  # Red for expenses
-            table.setItem(i, 2, jeff_item)
+            # User A's expenses
+            user_a_item = QTableWidgetItem(f"${user_a_actual:,.2f}")
+            if user_a_actual > 0:
+                user_a_item.setForeground(QColor(200, 50, 50))  # Red for expenses
+            table.setItem(i, 2, user_a_item)
 
-            # Vanessa's expenses
-            vanessa_item = QTableWidgetItem(f"${vanessa_actual:,.2f}")
-            if vanessa_actual > 0:
-                vanessa_item.setForeground(QColor(200, 50, 50))  # Red for expenses
-            table.setItem(i, 3, vanessa_item)
+            # User B's expenses
+            user_b_item = QTableWidgetItem(f"${user_b_actual:,.2f}")
+            if user_b_actual > 0:
+                user_b_item.setForeground(QColor(200, 50, 50))  # Red for expenses
+            table.setItem(i, 3, user_b_item)
 
             # Total actual
             total_item = QTableWidgetItem(f"${total_actual:,.2f}")

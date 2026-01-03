@@ -40,6 +40,24 @@ class BudgetTab(QWidget):
         header_layout.addWidget(title)
         header_layout.addStretch()
         
+        # Add Manage Categories button
+        manage_categories_btn = QPushButton("⚙️ Manage Categories")
+        manage_categories_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #1e3a5f;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #2c5282;
+            }
+        """)
+        manage_categories_btn.clicked.connect(self.show_category_management)
+        header_layout.addWidget(manage_categories_btn)
+        
         layout.addLayout(header_layout)
         
         # Create sub-tabs for Income and Expenses
@@ -55,6 +73,23 @@ class BudgetTab(QWidget):
         
         layout.addWidget(self.sub_tabs)
         self.setLayout(layout)
+    
+    def show_category_management(self):
+        """Show the category management dialog"""
+        from src.gui.utils.category_management_dialog import CategoryManagementDialog
+        
+        dialog = CategoryManagementDialog(self)
+        dialog.categoriesChanged.connect(self.on_categories_changed)
+        dialog.exec()
+    
+    def on_categories_changed(self):
+        """Handle categories being changed"""
+        # Reload categories in both sub-tabs
+        self.income_tab.load_categories()
+        self.expenses_tab.load_categories()
+        
+        # Refresh the data to show any changes
+        self.refresh_data()
         
     def refresh_data(self):
         """Refresh data in both sub-tabs"""
@@ -75,6 +110,9 @@ class IncomeSubTab(QWidget):
         """Initialize the Income UI"""
         layout = QVBoxLayout()
         
+        # Get user names from config
+        user_a, user_b = get_user_names()
+        
         # Top section - Add Income Form
         form_group = QGroupBox("Add Income")
         form_layout = QGridLayout()
@@ -82,7 +120,7 @@ class IncomeSubTab(QWidget):
         # Person selector
         form_layout.addWidget(QLabel("Person:"), 0, 0)
         self.person_combo = QComboBox()
-        self.person_combo.addItems(["Jeff", "Vanessa"])
+        self.person_combo.addItems([user_a, user_b])
         form_layout.addWidget(self.person_combo, 0, 1)
         
         # Amount
@@ -127,13 +165,13 @@ class IncomeSubTab(QWidget):
         # Monthly Summary Section
         summary_layout = QHBoxLayout()
         
-        # Jeff's Income Summary
-        self.jeff_summary = self.create_summary_card("Jeff's Monthly Income", "$0.00")
-        summary_layout.addWidget(self.jeff_summary)
+        # User A's Income Summary
+        self.user_a_summary = self.create_summary_card(f"{user_a}'s Monthly Income", "$0.00")
+        summary_layout.addWidget(self.user_a_summary)
         
-        # Vanessa's Income Summary
-        self.vanessa_summary = self.create_summary_card("Vanessa's Monthly Income", "$0.00")
-        summary_layout.addWidget(self.vanessa_summary)
+        # User B's Income Summary
+        self.user_b_summary = self.create_summary_card(f"{user_b}'s Monthly Income", "$0.00")
+        summary_layout.addWidget(self.user_b_summary)
         
         # Total Income Summary
         self.total_summary = self.create_summary_card("Total Monthly Income", "$0.00")
@@ -151,7 +189,7 @@ class IncomeSubTab(QWidget):
         filter_layout.addWidget(QLabel("Filter by:"))
         
         self.filter_person = QComboBox()
-        self.filter_person.addItems(["All", "Jeff", "Vanessa"])
+        self.filter_person.addItems(["All", user_a, user_b])
         self.filter_person.currentTextChanged.connect(self.refresh_data)
         filter_layout.addWidget(self.filter_person)
         
@@ -227,6 +265,10 @@ class IncomeSubTab(QWidget):
         
         layout.addWidget(history_group)
         self.setLayout(layout)
+    
+    def load_categories(self):
+        """Stub method - Income tab doesn't use categories"""
+        pass
         
     def create_summary_card(self, title, value):
         """Create a summary card widget"""
@@ -365,8 +407,9 @@ class IncomeSubTab(QWidget):
             # Clear and populate table
             self.income_table.setRowCount(0)
             
-            jeff_total = 0
-            vanessa_total = 0
+            user_a, user_b = get_user_names()
+            user_a_total = 0
+            user_b_total = 0
             
             for income in income_data:
                 row = self.income_table.rowCount()
@@ -383,15 +426,15 @@ class IncomeSubTab(QWidget):
                 self.income_table.setItem(row, 4, QTableWidgetItem(str(income['id'])))
                 
                 # Calculate totals
-                if income['person'] == 'Jeff':
-                    jeff_total += amount
+                if income['person'] == user_a:
+                    user_a_total += amount
                 else:
-                    vanessa_total += amount
+                    user_b_total += amount
             
             # Update summary cards
-            self.jeff_summary.value_label.setText(f"${jeff_total:,.2f}")
-            self.vanessa_summary.value_label.setText(f"${vanessa_total:,.2f}")
-            self.total_summary.value_label.setText(f"${jeff_total + vanessa_total:,.2f}")
+            self.user_a_summary.value_label.setText(f"${user_a_total:,.2f}")
+            self.user_b_summary.value_label.setText(f"${user_b_total:,.2f}")
+            self.total_summary.value_label.setText(f"${user_a_total + user_b_total:,.2f}")
             
         except Exception as e:
             print(f"Error refreshing income data: {e}")
@@ -486,8 +529,9 @@ class IncomeSubTab(QWidget):
             # Clear and populate table
             self.income_table.setRowCount(0)
 
-            jeff_total = 0
-            vanessa_total = 0
+            user_a, user_b = get_user_names()
+            user_a_total = 0
+            user_b_total = 0
 
             for income in income_data:
                 row = self.income_table.rowCount()
@@ -504,15 +548,15 @@ class IncomeSubTab(QWidget):
                 self.income_table.setItem(row, 4, QTableWidgetItem(str(income['id'])))
 
                 # Calculate totals
-                if income['person'] == 'Jeff':
-                    jeff_total += amount
+                if income['person'] == user_a:
+                    user_a_total += amount
                 else:
-                    vanessa_total += amount
+                    user_b_total += amount
 
             # Update summary cards
-            self.jeff_summary.value_label.setText(f"${jeff_total:,.2f}")
-            self.vanessa_summary.value_label.setText(f"${vanessa_total:,.2f}")
-            self.total_summary.value_label.setText(f"${jeff_total + vanessa_total:,.2f}")
+            self.user_a_summary.value_label.setText(f"${user_a_total:,.2f}")
+            self.user_b_summary.value_label.setText(f"${user_b_total:,.2f}")
+            self.total_summary.value_label.setText(f"${user_a_total + user_b_total:,.2f}")
 
         except Exception as e:
             print(f"Error updating income table: {e}")
@@ -555,6 +599,9 @@ class ExpensesSubTab(QWidget):
         """Initialize the Expenses UI"""
         layout = QVBoxLayout()
         
+        # Get user names from config
+        user_a, user_b = get_user_names()
+        
         # Top section - Add Expense Form
         form_group = QGroupBox("Add Expense")
         form_layout = QGridLayout()
@@ -562,7 +609,7 @@ class ExpensesSubTab(QWidget):
         # Row 1
         form_layout.addWidget(QLabel("Person:"), 0, 0)
         self.person_combo = QComboBox()
-        self.person_combo.addItems(["Jeff", "Vanessa"])
+        self.person_combo.addItems([user_a, user_b])
         form_layout.addWidget(self.person_combo, 0, 1)
         
         form_layout.addWidget(QLabel("Amount:"), 0, 2)
@@ -651,13 +698,13 @@ class ExpensesSubTab(QWidget):
         # Monthly Summary Section
         summary_layout = QHBoxLayout()
         
-        # Jeff's Expenses Summary
-        self.jeff_summary = self.create_summary_card("Jeff's Monthly Expenses", "$0.00")
-        summary_layout.addWidget(self.jeff_summary)
+        # User A's Expenses Summary
+        self.user_a_summary = self.create_summary_card(f"{user_a}'s Monthly Expenses", "$0.00")
+        summary_layout.addWidget(self.user_a_summary)
         
-        # Vanessa's Expenses Summary
-        self.vanessa_summary = self.create_summary_card("Vanessa's Monthly Expenses", "$0.00")
-        summary_layout.addWidget(self.vanessa_summary)
+        # User B's Expenses Summary
+        self.user_b_summary = self.create_summary_card(f"{user_b}'s Monthly Expenses", "$0.00")
+        summary_layout.addWidget(self.user_b_summary)
         
         # Total Expenses Summary
         self.total_summary = self.create_summary_card("Total Monthly Expenses", "$0.00")
@@ -679,7 +726,7 @@ class ExpensesSubTab(QWidget):
         filter_layout.addWidget(QLabel("Filter by:"))
         
         self.filter_person = QComboBox()
-        self.filter_person.addItems(["All", "Jeff", "Vanessa"])
+        self.filter_person.addItems(["All", user_a, user_b])
         self.filter_person.currentTextChanged.connect(self.refresh_data)
         filter_layout.addWidget(self.filter_person)
         
@@ -1355,16 +1402,17 @@ class ExpensesSubTab(QWidget):
                     return
 
                 # Show summary and confirm
-                jeff_count = sum(1 for exp in month_expenses if exp['person'] == 'Jeff')
-                vanessa_count = sum(1 for exp in month_expenses if exp['person'] == 'Vanessa')
-                jeff_total = sum(exp['amount'] for exp in month_expenses if exp['person'] == 'Jeff')
-                vanessa_total = sum(exp['amount'] for exp in month_expenses if exp['person'] == 'Vanessa')
+                user_a, user_b = get_user_names()
+                user_a_count = sum(1 for exp in month_expenses if exp['person'] == user_a)
+                user_b_count = sum(1 for exp in month_expenses if exp['person'] == user_b)
+                user_a_total = sum(exp['amount'] for exp in month_expenses if exp['person'] == user_a)
+                user_b_total = sum(exp['amount'] for exp in month_expenses if exp['person'] == user_b)
 
                 confirmation_msg = (
                     f"Found {len(month_expenses)} expenses for {month_name} {year}:\n\n"
-                    f"Jeff: {jeff_count} expenses, ${jeff_total:,.2f}\n"
-                    f"Vanessa: {vanessa_count} expenses, ${vanessa_total:,.2f}\n"
-                    f"Total: ${jeff_total + vanessa_total:,.2f}\n\n"
+                    f"{user_a}: {user_a_count} expenses, ${user_a_total:,.2f}\n"
+                    f"{user_b}: {user_b_count} expenses, ${user_b_total:,.2f}\n"
+                    f"Total: ${user_a_total + user_b_total:,.2f}\n\n"
                     f"Are you sure you want to delete these expenses?\n"
                     f"This action cannot be undone."
                 )
@@ -1521,8 +1569,9 @@ class ExpensesSubTab(QWidget):
             print(f"DEBUG: Cleared table, now has {self.expense_table.rowCount()} rows")
 
             # Calculate totals from ALL filtered data (not just visible)
-            jeff_total = 0
-            vanessa_total = 0
+            user_a, user_b = get_user_names()
+            user_a_total = 0
+            user_b_total = 0
             category_totals = {}
 
             # IMPORTANT: Calculate summary totals from the SAME filtered data that populates the table
@@ -1530,10 +1579,10 @@ class ExpensesSubTab(QWidget):
                 amount = expense['amount']
 
                 # Calculate totals for summary cards
-                if expense['person'] == 'Jeff':
-                    jeff_total += amount
+                if expense['person'] == user_a:
+                    user_a_total += amount
                 else:
-                    vanessa_total += amount
+                    user_b_total += amount
 
                 # Track category totals for top category
                 category = expense['category']
@@ -1542,9 +1591,9 @@ class ExpensesSubTab(QWidget):
                 category_totals[category] += amount
 
             # Update summary cards FIRST with calculated totals
-            self.jeff_summary.value_label.setText(f"${jeff_total:,.2f}")
-            self.vanessa_summary.value_label.setText(f"${vanessa_total:,.2f}")
-            self.total_summary.value_label.setText(f"${jeff_total + vanessa_total:,.2f}")
+            self.user_a_summary.value_label.setText(f"${user_a_total:,.2f}")
+            self.user_b_summary.value_label.setText(f"${user_b_total:,.2f}")
+            self.total_summary.value_label.setText(f"${user_a_total + user_b_total:,.2f}")
 
             # Find and display top category
             if category_totals:
@@ -1621,7 +1670,7 @@ class ExpensesSubTab(QWidget):
                           f"{expense['payment_method']} | Joint: {expense['realized']}")
 
             print(f"DEBUG: Final table row count: {self.expense_table.rowCount()}")
-            print(f"DEBUG: Summary totals - Jeff: ${jeff_total:,.2f}, Vanessa: ${vanessa_total:,.2f}, Total: ${jeff_total + vanessa_total:,.2f}")
+            print(f"DEBUG: Summary totals - {user_a}: ${user_a_total:,.2f}, {user_b}: ${user_b_total:,.2f}, Total: ${user_a_total + user_b_total:,.2f}")
 
             # CRITICAL FIX: Re-enable sorting AFTER table population is complete
             self.expense_table.setSortingEnabled(True)
