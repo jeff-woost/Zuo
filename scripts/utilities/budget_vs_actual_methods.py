@@ -29,6 +29,8 @@ Dependencies:
     - database.category_manager: Category organization and validation
 """
 
+from src.config import get_user_names
+
 def setup_budget_vs_actual_tab(self, tab):
     """
     Set up the budget vs actual analysis tab with category-specific tables.
@@ -143,11 +145,14 @@ def refresh_budget_vs_actual_data(self):
     ''', (month_start, month_end))
     
     # Organize actual expense data for efficient lookup
+    # Get user names from config
+    user_a_name, user_b_name = get_user_names()
+    
     actual_expenses = {}
     for row in cursor.fetchall():
         key = (row['category'], row['subcategory'])
         if key not in actual_expenses:
-            actual_expenses[key] = {'Jeff': 0, 'Vanessa': 0}
+            actual_expenses[key] = {user_a_name: 0, user_b_name: 0}
         actual_expenses[key][row['person']] = row['total']
 
     # Get budget targets/estimates if they exist in the database
@@ -189,12 +194,15 @@ def create_category_table(self, category, subcategories, actual_expenses, budget
     Table Structure:
     - Subcategory names in first column
     - Budget estimate in second column
-    - Jeff's actual expenses in third column
-    - Vanessa's actual expenses in fourth column
+    - User A's actual expenses in third column
+    - User B's actual expenses in fourth column
     - Total actual expenses in fifth column
     - Variance (budget - actual) in sixth column
     - Summary totals row at bottom
     """
+    # Get user names from config
+    user_a_name, user_b_name = get_user_names()
+    
     # Create group box container for the category with styling
     category_group = QGroupBox(f"{category} - Budget vs Actual")
     category_group.setStyleSheet("""
@@ -225,22 +233,22 @@ def create_category_table(self, category, subcategories, actual_expenses, budget
     table = QTableWidget()
     table.setColumnCount(6)
     table.setHorizontalHeaderLabels([
-        "Subcategory", "Estimate", "Jeff's Expenses", "Vanessa's Expenses", "Total Actual", "Variance"
+        "Subcategory", "Estimate", f"{user_a_name}'s Expenses", f"{user_b_name}'s Expenses", "Total Actual", "Variance"
     ])
     
     # Set column widths for optimal display
     header = table.horizontalHeader()
     header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)  # Subcategory - flexible
     header.setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)    # Estimate - fixed width
-    header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)    # Jeff - fixed width
-    header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)    # Vanessa - fixed width
+    header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)    # User A - fixed width
+    header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)    # User B - fixed width
     header.setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)    # Total - fixed width
     header.setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)    # Variance - fixed width
 
     # Set specific column widths for consistent appearance
     table.setColumnWidth(1, 100)  # Estimate
-    table.setColumnWidth(2, 120)  # Jeff
-    table.setColumnWidth(3, 120)  # Vanessa
+    table.setColumnWidth(2, 120)  # User A
+    table.setColumnWidth(3, 120)  # User B
     table.setColumnWidth(4, 100)  # Total
     table.setColumnWidth(5, 100)  # Variance
     
@@ -272,7 +280,7 @@ def create_category_table(self, category, subcategories, actual_expenses, budget
     
     # Populate table with subcategory data and calculations
     table.setRowCount(len(subcategories))
-    category_totals = {'estimate': 0, 'jeff': 0, 'vanessa': 0, 'actual': 0, 'variance': 0}
+    category_totals = {'estimate': 0, 'user_a': 0, 'user_b': 0, 'actual': 0, 'variance': 0}
     
     for i, subcategory in enumerate(subcategories):
         # Subcategory name in first column
@@ -283,22 +291,22 @@ def create_category_table(self, category, subcategories, actual_expenses, budget
         estimate = budget_targets.get(key, 0)
         table.setItem(i, 1, QTableWidgetItem(f"${estimate:,.2f}"))
         
-        # Get actual expenses for Jeff and Vanessa
-        jeff_actual = actual_expenses.get(key, {}).get('Jeff', 0)
-        vanessa_actual = actual_expenses.get(key, {}).get('Vanessa', 0)
-        total_actual = jeff_actual + vanessa_actual
+        # Get actual expenses for user A and user B
+        user_a_actual = actual_expenses.get(key, {}).get(user_a_name, 0)
+        user_b_actual = actual_expenses.get(key, {}).get(user_b_name, 0)
+        total_actual = user_a_actual + user_b_actual
         
-        # Jeff's expenses with red color for expense amounts
-        jeff_item = QTableWidgetItem(f"${jeff_actual:,.2f}")
-        if jeff_actual > 0:
-            jeff_item.setForeground(QColor(200, 50, 50))  # Red for expenses
-        table.setItem(i, 2, jeff_item)
+        # User A's expenses with red color for expense amounts
+        user_a_item = QTableWidgetItem(f"${user_a_actual:,.2f}")
+        if user_a_actual > 0:
+            user_a_item.setForeground(QColor(200, 50, 50))  # Red for expenses
+        table.setItem(i, 2, user_a_item)
         
-        # Vanessa's expenses with red color for expense amounts
-        vanessa_item = QTableWidgetItem(f"${vanessa_actual:,.2f}")
-        if vanessa_actual > 0:
-            vanessa_item.setForeground(QColor(200, 50, 50))  # Red for expenses
-        table.setItem(i, 3, vanessa_item)
+        # User B's expenses with red color for expense amounts
+        user_b_item = QTableWidgetItem(f"${user_b_actual:,.2f}")
+        if user_b_actual > 0:
+            user_b_item.setForeground(QColor(200, 50, 50))  # Red for expenses
+        table.setItem(i, 3, user_b_item)
         
         # Total actual expenses (bold and red)
         total_item = QTableWidgetItem(f"${total_actual:,.2f}")
@@ -321,8 +329,8 @@ def create_category_table(self, category, subcategories, actual_expenses, budget
         
         # Add to category totals for summary row
         category_totals['estimate'] += estimate
-        category_totals['jeff'] += jeff_actual
-        category_totals['vanessa'] += vanessa_actual
+        category_totals['user_a'] += user_a_actual
+        category_totals['user_b'] += user_b_actual
         category_totals['actual'] += total_actual
         category_totals['variance'] += variance
     
@@ -345,16 +353,16 @@ def create_category_table(self, category, subcategories, actual_expenses, budget
     estimate_total.setBackground(QColor(230, 230, 230))
     table.setItem(totals_row, 1, estimate_total)
     
-    # Jeff's total
-    jeff_total = QTableWidgetItem(f"${category_totals['jeff']:,.2f}")
-    jeff_total.setFont(total_font)
-    jeff_total.setBackground(QColor(230, 230, 230))
-    jeff_total.setForeground(QColor(200, 50, 50))
-    table.setItem(totals_row, 2, jeff_total)
+    # User A's total
+    user_a_total = QTableWidgetItem(f"${category_totals['user_a']:,.2f}")
+    user_a_total.setFont(total_font)
+    user_a_total.setBackground(QColor(230, 230, 230))
+    user_a_total.setForeground(QColor(200, 50, 50))
+    table.setItem(totals_row, 2, user_a_total)
     
-    # Vanessa's total
-    vanessa_total = QTableWidgetItem(f"${category_totals['vanessa']:,.2f}")
-    vanessa_total.setFont(total_font)
+    # User B's total
+    user_b_total = QTableWidgetItem(f"${category_totals['user_b']:,.2f}")
+    user_b_total.setFont(total_font)
     vanessa_total.setBackground(QColor(230, 230, 230))
     vanessa_total.setForeground(QColor(200, 50, 50))
     table.setItem(totals_row, 3, vanessa_total)
