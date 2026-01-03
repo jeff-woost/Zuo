@@ -514,7 +514,7 @@ class DatabaseManager:
         Add a new income entry to the database.
 
         Args:
-            person (str): Name of person receiving income ("Jeff" or "Vanessa")
+            person (str): Name of person receiving income (e.g., "User A" or "User B")
             amount (float): Income amount in dollars
             date (str): Date in YYYY-MM-DD format
             description (str, optional): Description of income source

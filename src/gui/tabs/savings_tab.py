@@ -953,6 +953,9 @@ class SavingsTab(QWidget):
     def refresh_financial_summary(self):
         """Refresh the financial summary data"""
         try:
+            from src.config import get_user_names
+            user_a, user_b = get_user_names()
+            
             month = self.summary_month_combo.currentIndex() + 1
             year = int(self.summary_year_combo.currentText())
 
@@ -961,15 +964,15 @@ class SavingsTab(QWidget):
 
             # Calculate totals
             total_income = sum(summary['income'].values())
-            jeff_expenses = summary['expenses'].get('Jeff', 0)
-            vanessa_expenses = summary['expenses'].get('Vanessa', 0)
-            total_expenses = jeff_expenses + vanessa_expenses
+            user_a_expenses = summary['expenses'].get(user_a, 0)
+            user_b_expenses = summary['expenses'].get(user_b, 0)
+            total_expenses = user_a_expenses + user_b_expenses
             available_savings = total_income - total_expenses
 
             # Update labels
             self.total_income_label.setText(f"${total_income:,.2f}")
-            self.jeff_expenses_label.setText(f"${jeff_expenses:,.2f}")
-            self.vanessa_expenses_label.setText(f"${vanessa_expenses:,.2f}")
+            self.jeff_expenses_label.setText(f"${user_a_expenses:,.2f}")
+            self.vanessa_expenses_label.setText(f"${user_b_expenses:,.2f}")
             self.total_expenses_label.setText(f"${total_expenses:,.2f}")
             self.available_savings_label.setText(f"${available_savings:,.2f}")
 
