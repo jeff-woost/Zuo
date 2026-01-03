@@ -22,7 +22,7 @@ except ImportError:
 from datetime import datetime, timedelta
 from collections import defaultdict
 
-from database.db_manager import DatabaseManager
+from src.database.db_manager import DatabaseManager
 
 class TrendsTab(QWidget):
     """Trends and analytics tab"""

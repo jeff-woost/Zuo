@@ -15,7 +15,7 @@ from PyQt6.QtGui import QFont, QColor
 from PyQt6.QtCharts import QChart, QChartView, QLineSeries, QDateTimeAxis, QValueAxis, QPieSeries
 from datetime import datetime
 import csv
-from database.db_manager import DatabaseManager
+from src.database.db_manager import DatabaseManager
 
 # Define asset categories and subcategories with default liquidity ratings
 ASSET_CATEGORIES = {

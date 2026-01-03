@@ -8,9 +8,9 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtCharts import *
 
-from database.models import IncomeModel, ExpenseModel, BudgetEstimateModel
-from database.category_manager import get_category_manager
-from gui.utils.category_detail_dialog import CategoryDetailDialog
+from src.database.models import IncomeModel, ExpenseModel, BudgetEstimateModel
+from src.database.category_manager import get_category_manager
+from src.gui.utils.category_detail_dialog import CategoryDetailDialog
 
 class PresentationTab(QWidget):
     """Monthly presentation tab with subtabs"""

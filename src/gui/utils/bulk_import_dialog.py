@@ -37,7 +37,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
 from typing import List, Dict
-from database.category_manager import get_category_manager
+from src.database.category_manager import get_category_manager
 
 class CustomComboBox(QComboBox):
     """

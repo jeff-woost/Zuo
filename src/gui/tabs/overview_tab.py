@@ -9,8 +9,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QDate
 from PyQt6.QtGui import QFont
 from datetime import datetime
-from database.db_manager import DatabaseManager
-from config import get_user_names
+from src.database.db_manager import DatabaseManager
+from src.config import get_user_names
 
 class OverviewTab(QWidget):
     def __init__(self):

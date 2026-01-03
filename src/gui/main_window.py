@@ -9,13 +9,13 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction, QIcon
 
-from gui.tabs.overview_tab import OverviewTab
-from gui.tabs.net_worth_tab import NetWorthTab
-from gui.tabs.budget_tab import BudgetTab
-from gui.tabs.presentation_tab import PresentationTab
-from gui.tabs.savings_tab import SavingsTab
-from gui.tabs.trends_tab import TrendsTab
-from gui.utils.styles import get_app_stylesheet
+from src.gui.tabs.overview_tab import OverviewTab
+from src.gui.tabs.net_worth_tab import NetWorthTab
+from src.gui.tabs.budget_tab import BudgetTab
+from src.gui.tabs.presentation_tab import PresentationTab
+from src.gui.tabs.savings_tab import SavingsTab
+from src.gui.tabs.trends_tab import TrendsTab
+from src.gui.utils.styles import get_app_stylesheet
 
 class MainWindow(QMainWindow):
     def __init__(self):

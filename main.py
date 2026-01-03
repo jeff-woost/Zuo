@@ -38,9 +38,9 @@ from PyQt6.QtCore import Qt
 # where it's executed from
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from config import load_settings
-from gui.views.onboarding import OnboardingWizard
-from app import BudgetApp
+from src.config import load_settings
+from src.gui.views.onboarding import OnboardingWizard
+from src.app import BudgetApp
 
 def main():
     """

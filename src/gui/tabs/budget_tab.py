@@ -14,12 +14,12 @@ from PyQt6.QtGui import QFont
 from datetime import datetime
 import csv
 import os
-from database.db_manager import DatabaseManager
-from database.category_manager import get_category_manager
-from gui.utils.expense_loader import ExpenseLoader
-from gui.utils.table_items import CurrencyTableWidgetItem, DateTableWidgetItem
-from gui.utils.advanced_filter_dialog import AdvancedFilterDialog
-from gui.utils.checkbox_styles import create_form_checkbox, create_table_checkbox
+from src.database.db_manager import DatabaseManager
+from src.database.category_manager import get_category_manager
+from src.gui.utils.expense_loader import ExpenseLoader
+from src.gui.utils.table_items import CurrencyTableWidgetItem, DateTableWidgetItem
+from src.gui.utils.advanced_filter_dialog import AdvancedFilterDialog
+from src.gui.utils.checkbox_styles import create_form_checkbox, create_table_checkbox
 
 class BudgetTab(QWidget):
     def __init__(self):

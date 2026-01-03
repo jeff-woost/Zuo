@@ -16,9 +16,9 @@ from PyQt6.QtGui import QFont
 from datetime import datetime, date
 import json
 import csv
-from database.db_manager import DatabaseManager
-from database.models import SavingsGoalModel, SavingsAllocationModel
-from gui.utils.goal_edit_dialog import GoalEditDialog
+from src.database.db_manager import DatabaseManager
+from src.database.models import SavingsGoalModel, SavingsAllocationModel
+from src.gui.utils.goal_edit_dialog import GoalEditDialog
 
 class SavingsTab(QWidget):
     """Tab for managing savings goals and fund allocation"""
