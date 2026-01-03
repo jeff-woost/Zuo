@@ -11,6 +11,7 @@ from PyQt6.QtCharts import *
 from src.database.models import IncomeModel, ExpenseModel, BudgetEstimateModel
 from src.database.category_manager import get_category_manager
 from src.gui.utils.category_detail_dialog import CategoryDetailDialog
+from src.config import get_user_names
 
 class PresentationTab(QWidget):
     """Monthly presentation tab with subtabs"""
@@ -74,16 +75,19 @@ class PresentationTab(QWidget):
 
         # Summary section
         summary_layout = QHBoxLayout()
+        
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
 
         # Income summary
         income_group = QGroupBox("Income Summary")
         income_layout = QVBoxLayout()
-        self.jeff_income_label = QLabel("Jeff: $0.00")
-        self.vanessa_income_label = QLabel("Vanessa: $0.00")
+        self.user_a_income_label = QLabel(f"{user_a_name}: $0.00")
+        self.user_b_income_label = QLabel(f"{user_b_name}: $0.00")
         self.total_income_label = QLabel("Total: $0.00")
         self.total_income_label.setStyleSheet("font-weight: bold;")
-        income_layout.addWidget(self.jeff_income_label)
-        income_layout.addWidget(self.vanessa_income_label)
+        income_layout.addWidget(self.user_a_income_label)
+        income_layout.addWidget(self.user_b_income_label)
         income_layout.addWidget(self.total_income_label)
         income_group.setLayout(income_layout)
         summary_layout.addWidget(income_group)
@@ -91,12 +95,12 @@ class PresentationTab(QWidget):
         # Expense summary
         expense_group = QGroupBox("Expense Summary")
         expense_layout = QVBoxLayout()
-        self.jeff_expense_label = QLabel("Jeff: $0.00")
-        self.vanessa_expense_label = QLabel("Vanessa: $0.00")
+        self.user_a_expense_label = QLabel(f"{user_a_name}: $0.00")
+        self.user_b_expense_label = QLabel(f"{user_b_name}: $0.00")
         self.total_expense_label = QLabel("Total: $0.00")
         self.total_expense_label.setStyleSheet("font-weight: bold;")
-        expense_layout.addWidget(self.jeff_expense_label)
-        expense_layout.addWidget(self.vanessa_expense_label)
+        expense_layout.addWidget(self.user_a_expense_label)
+        expense_layout.addWidget(self.user_b_expense_label)
         expense_layout.addWidget(self.total_expense_label)
         expense_group.setLayout(expense_layout)
         summary_layout.addWidget(expense_group)
@@ -269,16 +273,19 @@ class PresentationTab(QWidget):
 
         # Summary section for unrealized expenses
         summary_layout = QHBoxLayout()
+        
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
 
         # Unrealized expenses summary
         unrealized_group = QGroupBox("Unrealized Expenses to Withdraw")
         unrealized_layout = QVBoxLayout()
-        self.jeff_unrealized_label = QLabel("Jeff: $0.00")
-        self.vanessa_unrealized_label = QLabel("Vanessa: $0.00")
+        self.user_a_unrealized_label = QLabel(f"{user_a_name}: $0.00")
+        self.user_b_unrealized_label = QLabel(f"{user_b_name}: $0.00")
         self.total_unrealized_label = QLabel("Total to Withdraw: $0.00")
         self.total_unrealized_label.setStyleSheet("font-weight: bold; font-size: 14px; color: #d32f2f;")
-        unrealized_layout.addWidget(self.jeff_unrealized_label)
-        unrealized_layout.addWidget(self.vanessa_unrealized_label)
+        unrealized_layout.addWidget(self.user_a_unrealized_label)
+        unrealized_layout.addWidget(self.user_b_unrealized_label)
         unrealized_layout.addWidget(QLabel(""))  # Spacer
         unrealized_layout.addWidget(self.total_unrealized_label)
         unrealized_group.setLayout(unrealized_layout)
@@ -322,13 +329,16 @@ class PresentationTab(QWidget):
             GROUP BY person
         ''', (month_start, month_end))
 
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
         income_by_person = {row['person']: row['total'] for row in cursor.fetchall()}
-        jeff_income = income_by_person.get('Jeff', 0)
-        vanessa_income = income_by_person.get('Vanessa', 0)
-        total_income = jeff_income + vanessa_income
+        user_a_income = income_by_person.get(user_a_name, 0)
+        user_b_income = income_by_person.get(user_b_name, 0)
+        total_income = user_a_income + user_b_income
 
-        self.jeff_income_label.setText(f"Jeff: ${jeff_income:,.2f}")
-        self.vanessa_income_label.setText(f"Vanessa: ${vanessa_income:,.2f}")
+        self.user_a_income_label.setText(f"{user_a_name}: ${user_a_income:,.2f}")
+        self.user_b_income_label.setText(f"{user_b_name}: ${user_b_income:,.2f}")
         self.total_income_label.setText(f"Total: ${total_income:,.2f}")
 
         # Get expenses by person
@@ -340,12 +350,12 @@ class PresentationTab(QWidget):
         ''', (month_start, month_end))
 
         expenses_by_person = {row['person']: row['total'] for row in cursor.fetchall()}
-        jeff_expenses = expenses_by_person.get('Jeff', 0)
-        vanessa_expenses = expenses_by_person.get('Vanessa', 0)
-        total_expenses = jeff_expenses + vanessa_expenses
+        user_a_expenses = expenses_by_person.get(user_a_name, 0)
+        user_b_expenses = expenses_by_person.get(user_b_name, 0)
+        total_expenses = user_a_expenses + user_b_expenses
 
-        self.jeff_expense_label.setText(f"Jeff: ${jeff_expenses:,.2f}")
-        self.vanessa_expense_label.setText(f"Vanessa: ${vanessa_expenses:,.2f}")
+        self.user_a_expense_label.setText(f"{user_a_name}: ${user_a_expenses:,.2f}")
+        self.user_b_expense_label.setText(f"{user_b_name}: ${user_b_expenses:,.2f}")
         self.total_expense_label.setText(f"Total: ${total_expenses:,.2f}")
 
         # Update category table
@@ -1228,16 +1238,19 @@ class PresentationTab(QWidget):
         month_start = first_of_month.toString("yyyy-MM-dd")
         month_end = first_of_month.addMonths(1).addDays(-1).toString("yyyy-MM-dd")
 
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
         # Get unrealized expenses by person
         unrealized_by_person = ExpenseModel.get_unrealized_by_person(self.db, month_start, month_end)
         unrealized_dict = {row['person']: row['total'] for row in unrealized_by_person}
 
-        jeff_unrealized = unrealized_dict.get('Jeff', 0)
-        vanessa_unrealized = unrealized_dict.get('Vanessa', 0)
-        total_unrealized = jeff_unrealized + vanessa_unrealized
+        user_a_unrealized = unrealized_dict.get(user_a_name, 0)
+        user_b_unrealized = unrealized_dict.get(user_b_name, 0)
+        total_unrealized = user_a_unrealized + user_b_unrealized
 
-        self.jeff_unrealized_label.setText(f"Jeff: ${jeff_unrealized:,.2f}")
-        self.vanessa_unrealized_label.setText(f"Vanessa: ${vanessa_unrealized:,.2f}")
+        self.user_a_unrealized_label.setText(f"{user_a_name}: ${user_a_unrealized:,.2f}")
+        self.user_b_unrealized_label.setText(f"{user_b_name}: ${user_b_unrealized:,.2f}")
         self.total_unrealized_label.setText(f"Total to Withdraw: ${total_unrealized:,.2f}")
 
         # Get all unrealized expenses

@@ -16,6 +16,7 @@ from PyQt6.QtCharts import QChart, QChartView, QLineSeries, QDateTimeAxis, QValu
 from datetime import datetime
 import csv
 from src.database.db_manager import DatabaseManager
+from src.config import get_user_names
 
 # Define asset categories and subcategories with default liquidity ratings
 ASSET_CATEGORIES = {
@@ -115,15 +116,18 @@ class AddAssetDialog(QDialog):
 
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()
+        
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
 
         # Asset name
         self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("e.g., Jeff's Fidelity 401k")
+        self.name_input.setPlaceholderText(f"e.g., {user_a_name}'s Fidelity 401k")
         form_layout.addRow("Asset Name:", self.name_input)
 
         # Person
         self.person_combo = QComboBox()
-        self.person_combo.addItems(["Jeff", "Vanessa", "Joint"])
+        self.person_combo.addItems([user_a_name, user_b_name, "Joint"])
         form_layout.addRow("Person:", self.person_combo)
 
         # Category
@@ -403,12 +407,15 @@ class NetWorthTab(QWidget):
         """Create the summary cards section"""
         summary_group = QGroupBox("Net Worth Summary")
         summary_layout = QGridLayout(summary_group)
+        
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
 
-        self.jeff_total_label = self.create_summary_card("Jeff's Assets", "$0.00")
-        summary_layout.addWidget(self.jeff_total_label, 0, 0)
+        self.user_a_total_label = self.create_summary_card(f"{user_a_name}'s Assets", "$0.00")
+        summary_layout.addWidget(self.user_a_total_label, 0, 0)
 
-        self.vanessa_total_label = self.create_summary_card("Vanessa's Assets", "$0.00")
-        summary_layout.addWidget(self.vanessa_total_label, 0, 1)
+        self.user_b_total_label = self.create_summary_card(f"{user_b_name}'s Assets", "$0.00")
+        summary_layout.addWidget(self.user_b_total_label, 0, 1)
 
         self.joint_total_label = self.create_summary_card("Joint Assets", "$0.00")
         summary_layout.addWidget(self.joint_total_label, 0, 2)
@@ -629,16 +636,19 @@ class NetWorthTab(QWidget):
 
     def refresh_summary(self):
         """Refresh summary totals"""
-        jeff_total = sum(a.get('value', 0) or 0 for a in self.assets_list if a.get('person') == 'Jeff')
-        vanessa_total = sum(a.get('value', 0) or 0 for a in self.assets_list if a.get('person') == 'Vanessa')
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
+        user_a_total = sum(a.get('value', 0) or 0 for a in self.assets_list if a.get('person') == user_a_name)
+        user_b_total = sum(a.get('value', 0) or 0 for a in self.assets_list if a.get('person') == user_b_name)
         joint_total = sum(a.get('value', 0) or 0 for a in self.assets_list if a.get('person') == 'Joint')
-        total = jeff_total + vanessa_total + joint_total
+        total = user_a_total + user_b_total + joint_total
 
         liquid_total = sum(a.get('value', 0) or 0 for a in self.assets_list if (a.get('liquidity', 5) or 5) >= 7)
         illiquid_total = sum(a.get('value', 0) or 0 for a in self.assets_list if (a.get('liquidity', 5) or 5) < 7)
 
-        self.jeff_total_label.value_label.setText(f"${jeff_total:,.2f}")
-        self.vanessa_total_label.value_label.setText(f"${vanessa_total:,.2f}")
+        self.user_a_total_label.value_label.setText(f"${user_a_total:,.2f}")
+        self.user_b_total_label.value_label.setText(f"${user_b_total:,.2f}")
         self.joint_total_label.value_label.setText(f"${joint_total:,.2f}")
         self.total_net_worth_label.value_label.setText(f"${total:,.2f}")
         self.liquid_assets_label.value_label.setText(f"${liquid_total:,.2f}")

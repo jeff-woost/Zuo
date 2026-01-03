@@ -23,6 +23,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 
 from src.database.db_manager import DatabaseManager
+from src.config import get_user_names
 
 class TrendsTab(QWidget):
     """Trends and analytics tab"""
@@ -1039,6 +1040,9 @@ class TrendsTab(QWidget):
                 self.networth_chart.setChart(chart)
                 return
 
+            # Get user names from config
+            user_a_name, user_b_name = get_user_names()
+
             # Create chart
             chart = QChart()
             chart.setTitle("Net Worth Growth Over Time")
@@ -1047,11 +1051,11 @@ class TrendsTab(QWidget):
             total_series = QLineSeries()
             total_series.setName("Total Net Worth")
 
-            jeff_series = QLineSeries()
-            jeff_series.setName("Jeff")
+            user_a_series = QLineSeries()
+            user_a_series.setName(user_a_name)
 
-            vanessa_series = QLineSeries()
-            vanessa_series.setName("Vanessa")
+            user_b_series = QLineSeries()
+            user_b_series.setName(user_b_name)
 
             joint_series = QLineSeries()
             joint_series.setName("Joint")
@@ -1059,14 +1063,14 @@ class TrendsTab(QWidget):
             # Add data points
             for i, snapshot in enumerate(snapshots):
                 total_series.append(i, snapshot['total_net_worth'])
-                jeff_series.append(i, snapshot['user_a_total'])
-                vanessa_series.append(i, snapshot['user_b_total'])
+                user_a_series.append(i, snapshot['user_a_total'])
+                user_b_series.append(i, snapshot['user_b_total'])
                 joint_series.append(i, snapshot['joint_total'])
 
             # Add series to chart
             chart.addSeries(total_series)
-            chart.addSeries(jeff_series)
-            chart.addSeries(vanessa_series)
+            chart.addSeries(user_a_series)
+            chart.addSeries(user_b_series)
             chart.addSeries(joint_series)
 
             # Create axes
