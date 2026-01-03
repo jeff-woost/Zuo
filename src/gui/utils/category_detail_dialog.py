@@ -747,7 +747,7 @@ class CategoryDetailDialog(QDialog):
                         estimate_amount = float(estimate_text) if estimate_text else 0.0
 
                         # Save to database using the BudgetEstimateModel
-                        from database.models import BudgetEstimateModel
+                        from src.database.models import BudgetEstimateModel
                         if BudgetEstimateModel.save(self.db, self.category, subcategory, estimate_amount, year, month):
                             saved_count += 1
                         else:

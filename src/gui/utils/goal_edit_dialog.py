@@ -234,7 +234,7 @@ class GoalEditDialog(QDialog):
                 return
 
             # Import the models at the top of the method to avoid circular imports
-            from database.models import SavingsGoalModel
+            from src.database.models import SavingsGoalModel
 
             if self.is_new_goal:
                 # Check if goal name already exists

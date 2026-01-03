@@ -320,7 +320,7 @@ class IncomeSubTab(QWidget):
                     income_id = int(income_id_item.text())
 
                     # Delete from database using the model's delete method
-                    from database.models import IncomeModel
+                    from src.database.models import IncomeModel
                     IncomeModel.delete(self.db, income_id)
                     deleted_count += 1
 
@@ -955,7 +955,7 @@ class ExpensesSubTab(QWidget):
             # Use database context manager to ensure proper transaction handling
             with self.db as db:
                 # Add to database using the ExpenseModel.add method
-                from database.models import ExpenseModel
+                from src.database.models import ExpenseModel
                 ExpenseModel.add(db, date, person, amount, category, subcategory,
                                description, payment_method, realized)
 
@@ -1080,7 +1080,7 @@ class ExpensesSubTab(QWidget):
                 return  # User cancelled
 
             # Use the new BulkImportPreviewDialog with proper category handling
-            from gui.utils.bulk_import_dialog import BulkImportPreviewDialog
+            from src.gui.utils.bulk_import_dialog import BulkImportPreviewDialog
 
             # Get categories from the loader to ensure they match
             loader_categories = loader.get_available_categories()
@@ -1202,7 +1202,7 @@ class ExpensesSubTab(QWidget):
                     print(f"DEBUG: Attempting to delete expense ID {expense_id}")
 
                     # Delete from database using the model's delete method
-                    from database.models import ExpenseModel
+                    from src.database.models import ExpenseModel
                     ExpenseModel.delete(self.db, expense_id)
                     deleted_count += 1
                     print(f"DEBUG: Successfully deleted expense ID {expense_id}")
@@ -1379,7 +1379,7 @@ class ExpensesSubTab(QWidget):
                     return
 
                 # Delete expenses for this month
-                from database.models import ExpenseModel
+                from src.database.models import ExpenseModel
                 deleted_count = 0
                 for expense in month_expenses:
                     ExpenseModel.delete(self.db, expense['id'])
@@ -1414,7 +1414,7 @@ class ExpensesSubTab(QWidget):
                     return
 
                 # Use the ExpenseModel.clear_all method to completely clear expenses
-                from database.models import ExpenseModel
+                from src.database.models import ExpenseModel
                 count = ExpenseModel.clear_all(self.db)
 
                 # Refresh the table to show empty state
@@ -1653,7 +1653,7 @@ class ExpensesSubTab(QWidget):
 
             try:
                 # Update the expense in the database
-                from database.models import ExpenseModel
+                from src.database.models import ExpenseModel
                 if realized:
                     ExpenseModel.mark_as_realized(self.db, expense_id)
                 else:

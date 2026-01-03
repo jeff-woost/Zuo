@@ -337,7 +337,7 @@ class BulkImportPreviewDialog(QDialog):
         self.default_person = default_person  # Store default person for pre-population
         self.category_manager = get_category_manager()
         # Import database manager for category learning
-        from database.db_manager import DatabaseManager
+        from src.database.db_manager import DatabaseManager
         self.db = DatabaseManager()
         # Refresh categories to get latest data
         self.categories_data = self.category_manager.get_categories()
