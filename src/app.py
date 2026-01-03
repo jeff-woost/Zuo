@@ -26,15 +26,15 @@ Dependencies:
 from PyQt6.QtWidgets import QMainWindow, QTabWidget, QVBoxLayout, QWidget
 from PyQt6.QtCore import Qt
 
-from database.db_manager import DatabaseManager
-from gui.tabs.overview_tab import OverviewTab
-from gui.tabs.net_worth_tab import NetWorthTab
-from gui.tabs.budget_tab import BudgetTab
-from gui.tabs.presentation_tab import PresentationTab
-from gui.tabs.savings_tab import SavingsTab
-from gui.tabs.trends_tab import TrendsTab
-from gui.tabs.bank_reconciliation_tab import BankReconciliationTab
-from gui.utils.styles import get_app_stylesheet
+from src.database.db_manager import DatabaseManager
+from src.gui.tabs.overview_tab import OverviewTab
+from src.gui.tabs.net_worth_tab import NetWorthTab
+from src.gui.tabs.budget_tab import BudgetTab
+from src.gui.tabs.presentation_tab import PresentationTab
+from src.gui.tabs.savings_tab import SavingsTab
+from src.gui.tabs.trends_tab import TrendsTab
+from src.gui.tabs.bank_reconciliation_tab import BankReconciliationTab
+from src.gui.utils.styles import get_app_stylesheet
 
 class BudgetApp(QMainWindow):
     """

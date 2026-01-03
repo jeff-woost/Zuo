@@ -44,7 +44,7 @@ config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 if config_path not in sys.path:
     sys.path.insert(0, config_path)
 
-from config import load_defaults
+from src.config import load_defaults
 
 class DatabaseManager:
     """

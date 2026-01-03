@@ -14,7 +14,8 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('config/defaults.json', 'config'),
+        ('src/config/defaults.json', 'src/config'),
+        ('data/categories.csv', 'data'),
     ],
     hiddenimports=[
         'PyQt6.QtCore',

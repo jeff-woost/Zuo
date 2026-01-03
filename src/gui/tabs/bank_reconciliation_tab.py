@@ -23,8 +23,8 @@ from PyQt6.QtCore import Qt, QDate
 from PyQt6.QtGui import QFont, QColor
 from datetime import datetime
 import csv
-from database.db_manager import DatabaseManager
-from database.category_manager import get_category_manager
+from src.database.db_manager import DatabaseManager
+from src.database.category_manager import get_category_manager
 
 class ImportTransactionDialog(QDialog):
     """Dialog for importing a bank transaction as income or expense"""

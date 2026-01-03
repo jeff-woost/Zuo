@@ -32,7 +32,7 @@ import os
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 import re
-from database.category_manager import get_category_manager
+from src.database.category_manager import get_category_manager
 
 class ExpenseLoader:
     """

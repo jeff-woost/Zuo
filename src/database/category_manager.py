@@ -33,7 +33,7 @@ Dependencies:
 import csv
 import os
 from typing import Dict, List
-from database.db_manager import DatabaseManager
+from src.database.db_manager import DatabaseManager
 
 class CategoryManager:
     """
@@ -82,7 +82,9 @@ class CategoryManager:
         5. Load any additional database-only categories
         """
         # Load from CSV first
-        categories_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'categories.csv')
+        # Navigate from src/database/ -> project_root/data/categories.csv
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        categories_file = os.path.join(project_root, 'data', 'categories.csv')
 
         if os.path.exists(categories_file):
             try:

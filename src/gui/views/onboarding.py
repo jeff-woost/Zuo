@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QPixmap
 import os
-from config import save_settings, load_settings
+from src.config import save_settings, load_settings
 
 
 class OnboardingWizard(QDialog):

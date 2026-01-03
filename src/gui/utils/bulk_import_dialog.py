@@ -37,7 +37,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
 from typing import List, Dict
-from database.category_manager import get_category_manager
+from src.database.category_manager import get_category_manager
 
 class CustomComboBox(QComboBox):
     """
@@ -337,7 +337,7 @@ class BulkImportPreviewDialog(QDialog):
         self.default_person = default_person  # Store default person for pre-population
         self.category_manager = get_category_manager()
         # Import database manager for category learning
-        from database.db_manager import DatabaseManager
+        from src.database.db_manager import DatabaseManager
         self.db = DatabaseManager()
         # Refresh categories to get latest data
         self.categories_data = self.category_manager.get_categories()
