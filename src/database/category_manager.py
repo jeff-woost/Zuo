@@ -151,16 +151,24 @@ class CategoryManager:
         - And many more...
         """
         self._categories_data = {
-            'Housing': ['Mortgage', 'HOA', 'Property Taxes', 'Reserves', 'Special Assessment', 'Additional Principal', 'Lima Apartment Wires', 'Lima Apartment Fees', 'Escrow', 'Condo Insurance', 'Labor'],
-            'Utilities': ['Electric', 'Gas', 'Internet', 'Phone', 'Insurance', 'Optimum', 'PSEG', 'Cell Phone', 'Car Insurance', 'Gloria', 'Taxi / Transit', 'Bus Pass', 'Misc Utility'],
-            'Food': ['Food (Groceries)', 'Food (Take Out)', 'Food (Dining Out)', 'Food (Other)', 'Food (Party)', 'Food (Guests)', 'Food (Work)', 'Food (Special Occasion)'],
-            'Healthcare': ['Prescriptions', 'Doctor Visits', 'Co-Pay', 'Jeff Doctor', 'Vitamins', 'Other Doctor Visits', 'Haircut', 'Hygenie', 'Family', 'Fertility', 'Baker', 'HC Subscriptions', 'Joaquin Health Care', 'Zoe Health Care', 'Misc Health Care', 'Misc Healthcare'],
-            'Childcare': ['Village Classes', 'Baby Sitting', 'Clothing', 'Diapers', 'Necessities', 'Accessories', 'Toys', 'Food / Snacks', 'Haircut', 'Activities', 'Uber / Lyft', 'Misc.'],
-            'Vehicles': ['Gas', 'Insurance', 'Repairs', 'Parking', 'Vehicle Fixes', 'Vehicle Other', 'DMV', 'Parts', 'Tires / Wheels', 'Oil Changes', 'Car Wash', 'Tolls'],
-            'Home': ['Home Necessities', 'Home Décor', 'House Cleaning', 'Bathroom', 'Bedrooms', 'Kitchen', 'Tools / Hardware', 'Storage', 'Homeware', 'Subscriptions'],
-            'Other': ['Entertainment', 'Clothes', 'Clothing', 'Other', 'Gifts', 'Taxes', 'Donations', 'Gatherings', 'Parties', 'Shoes', 'Pets', 'Target AutoPay', 'Stupid Tax', 'Amazon Prime', 'Fees', 'Reversal'],
-            'Vacation': ['Flights/Travel', 'Rental Car', 'Airport', 'Taxi', 'Food', 'Eating Out', 'Gas', 'Activities', 'Bedding', 'Fees', 'Physical Goods', 'Housing', 'Necessities'],
-            'Income': ["Jeff's Income", "Vanessa's Income", "Bonus", "Other Income"]
+            'Housing': ['Rent/Mortgage', 'Property Tax', 'HOA Fees', 'Home Insurance', 'Maintenance', 'Repairs', 'Special Assessment', 'Additional Principal', 'Escrow', 'Reserves', 'Labor'],
+            'Utilities': ['Electric', 'Gas', 'Water', 'Internet', 'Phone', 'Cable/Streaming', 'Cell Phone', 'Transit', 'Bus Pass'],
+            'Transportation': ['Car Payment', 'Gas/Fuel', 'Insurance', 'Maintenance', 'Public Transit', 'Parking', 'Tolls', 'Rideshare', 'Repairs', 'DMV', 'Parts', 'Tires', 'Oil Changes', 'Car Wash'],
+            'Food & Dining': ['Groceries', 'Restaurants', 'Coffee Shops', 'Food Delivery', 'Work Meals', 'Take Out', 'Dining Out', 'Party', 'Guests', 'Special Occasion'],
+            'Healthcare': ['Insurance Premiums', 'Doctor Visits', 'Prescriptions', 'Dental', 'Vision', 'Mental Health', 'Primary Care', 'Specialists', 'Vitamins', 'Co-Pay', 'Medical Subscriptions', 'Hygiene', 'Family', 'Haircut'],
+            'Insurance': ['Life Insurance', 'Disability', 'Umbrella Policy', 'Home Insurance', 'Car Insurance'],
+            'Debt Payments': ['Credit Cards', 'Student Loans', 'Personal Loans'],
+            'Savings & Investments': ['Emergency Fund', 'Retirement (401k/IRA)', 'Brokerage', 'HSA/FSA'],
+            'Personal': ['Clothing', 'Haircuts', 'Gym/Fitness', 'Subscriptions', 'Hobbies', 'Shoes', 'Beauty/Grooming'],
+            'Family & Children': ['Childcare', 'Education', 'Activities', 'Supplies', 'Classes', 'Baby Sitting', 'Children\'s Clothing', 'Diapers', 'Toys', 'Food/Snacks'],
+            'Entertainment': ['Movies', 'Events', 'Gaming', 'Sports', 'Vacations', 'Streaming Services', 'Concerts', 'Hobbies'],
+            'Gifts & Donations': ['Gifts', 'Charitable Donations', 'Religious Giving', 'Gatherings', 'Parties'],
+            'Business': ['Office Supplies', 'Software', 'Professional Services', 'Travel', 'Business Meals'],
+            'Pets': ['Pet Food', 'Veterinary', 'Pet Supplies', 'Grooming', 'Pet Insurance'],
+            'Home & Garden': ['Home Necessities', 'Home Décor', 'House Cleaning', 'Bathroom', 'Bedrooms', 'Kitchen', 'Tools/Hardware', 'Storage', 'Homeware', 'Garden Supplies'],
+            'Vacation & Travel': ['Flights/Travel', 'Rental Car', 'Airport', 'Taxi', 'Food', 'Eating Out', 'Gas', 'Activities', 'Lodging', 'Fees', 'Shopping', 'Necessities'],
+            'Miscellaneous': ['Other', 'Uncategorized', 'Cash Withdrawals', 'Fees', 'Reversal', 'Taxes'],
+            'Income': ['Primary Salary', 'Secondary Salary', 'Bonus', 'Investment Income', 'Side Hustle', 'Other Income']
         }
 
     def _ensure_categories_table(self):

@@ -87,18 +87,8 @@ ASSET_CATEGORIES = {
     }
 }
 
-# Preset assets to get users started
-PRESET_ASSETS = [
-    {"name": "Jeff's TD 401k", "person": "Jeff", "category": "Retirement", "subcategory": "Roth 401k", "liquidity": 2},
-    {"name": "Vanessa's Roth 401k", "person": "Vanessa", "category": "Retirement", "subcategory": "Roth 401k", "liquidity": 2},
-    {"name": "Jeff's Schwab Roth", "person": "Jeff", "category": "Retirement", "subcategory": "Roth IRA", "liquidity": 2},
-    {"name": "618 Chase Court", "person": "Joint", "category": "Real Asset", "subcategory": "House", "liquidity": 1},
-    {"name": "Lima Condo", "person": "Joint", "category": "Real Asset", "subcategory": "Condo", "liquidity": 1},
-    {"name": "Joint Schwab Brokerage", "person": "Joint", "category": "Brokerage Account", "subcategory": "Investments", "liquidity": 8},
-    {"name": "TD Joint Checking", "person": "Joint", "category": "Checking Account", "subcategory": "Cash", "liquidity": 10},
-    {"name": "Joint Savings Account", "person": "Joint", "category": "Savings Account", "subcategory": "Cash", "liquidity": 9},
-    {"name": "Jeff's Trust", "person": "Jeff", "category": "Trust", "subcategory": "Investments", "liquidity": 3},
-]
+# Preset assets are removed to provide a blank slate for new users
+PRESET_ASSETS = []
 
 
 class AddAssetDialog(QDialog):
@@ -737,8 +727,9 @@ class NetWorthTab(QWidget):
             form_layout.addRow("Asset Name:", name_input)
 
             # Person - EDITABLE
+            user_a, user_b = get_user_names()
             person_combo = QComboBox()
-            person_combo.addItems(["Jeff", "Vanessa", "Joint"])
+            person_combo.addItems([user_a, user_b, "Joint"])
             person_combo.setCurrentText(asset.get('person', 'Joint'))
             form_layout.addRow("Person:", person_combo)
 

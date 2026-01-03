@@ -1,104 +1,157 @@
 {
   "categories": {
     "Housing": [
-      "Mortgage",
+      "Rent/Mortgage",
+      "Property Tax",
+      "HOA Fees",
+      "Home Insurance",
+      "Maintenance",
+      "Utilities",
+      "Repairs",
       "Special Assessment",
       "Additional Principal",
       "Escrow",
-      "HOA",
       "Reserves",
-      "Condo Insurance",
-      "Property Taxes",
-      "Labor",
-      "Rent"
+      "Labor"
     ],
     "Utilities": [
-      "Internet",
       "Electric",
-      "Cell Phone",
-      "Car Insurance",
-      "Insurance",
-      "Transit",
-      "Bus Pass",
-      "Misc Utility"
-    ],
-    "Food": [
-      "Groceries",
-      "Take Out",
-      "Dining Out",
-      "Other",
-      "Party",
-      "Guests",
-      "Work",
-      "Special Occasion"
-    ],
-    "Healthcare": [
-      "Primary Care",
-      "Prescriptions",
-      "Vitamins",
-      "Specialists",
-      "Haircut",
-      "Hygiene",
-      "Family",
-      "Co-Pay",
-      "Subscriptions",
-      "Misc Healthcare"
-    ],
-    "Childcare": [
-      "Classes",
-      "Baby Sitting",
-      "Clothing",
-      "Diapers",
-      "Necessities",
-      "Accessories",
-      "Toys",
-      "Food/Snacks",
-      "Haircut",
-      "Activities",
-      "Rideshare",
-      "Misc"
-    ],
-    "Vehicles": [
-      "Repairs",
-      "Other",
       "Gas",
+      "Water",
+      "Internet",
+      "Phone",
+      "Cable/Streaming",
+      "Cell Phone",
+      "Transit",
+      "Bus Pass"
+    ],
+    "Transportation": [
+      "Car Payment",
+      "Gas/Fuel",
+      "Insurance",
+      "Maintenance",
+      "Public Transit",
+      "Parking",
+      "Tolls",
+      "Rideshare",
+      "Repairs",
       "DMV",
       "Parts",
       "Tires",
-      "Insurance",
       "Oil Changes",
-      "Car Wash",
-      "Parking",
-      "Tolls"
+      "Car Wash"
     ],
-    "Home": [
-      "Necessities",
-      "Décor",
-      "Cleaning",
+    "Food & Dining": [
+      "Groceries",
+      "Restaurants",
+      "Coffee Shops",
+      "Food Delivery",
+      "Work Meals",
+      "Take Out",
+      "Dining Out",
+      "Party",
+      "Guests",
+      "Special Occasion"
+    ],
+    "Healthcare": [
+      "Insurance Premiums",
+      "Doctor Visits",
+      "Prescriptions",
+      "Dental",
+      "Vision",
+      "Mental Health",
+      "Primary Care",
+      "Specialists",
+      "Vitamins",
+      "Co-Pay",
+      "Medical Subscriptions",
+      "Hygiene",
+      "Family",
+      "Haircut"
+    ],
+    "Insurance": [
+      "Life Insurance",
+      "Disability",
+      "Umbrella Policy",
+      "Home Insurance",
+      "Car Insurance"
+    ],
+    "Debt Payments": [
+      "Credit Cards",
+      "Student Loans",
+      "Personal Loans"
+    ],
+    "Savings & Investments": [
+      "Emergency Fund",
+      "Retirement (401k/IRA)",
+      "Brokerage",
+      "HSA/FSA"
+    ],
+    "Personal": [
+      "Clothing",
+      "Haircuts",
+      "Gym/Fitness",
+      "Subscriptions",
+      "Hobbies",
+      "Shoes",
+      "Beauty/Grooming"
+    ],
+    "Family & Children": [
+      "Childcare",
+      "Education",
+      "Activities",
+      "Supplies",
+      "Classes",
+      "Baby Sitting",
+      "Children's Clothing",
+      "Diapers",
+      "Toys",
+      "Food/Snacks"
+    ],
+    "Entertainment": [
+      "Movies",
+      "Events",
+      "Gaming",
+      "Sports",
+      "Vacations",
+      "Streaming Services",
+      "Concerts",
+      "Hobbies"
+    ],
+    "Gifts & Donations": [
+      "Gifts",
+      "Charitable Donations",
+      "Religious Giving",
+      "Gatherings",
+      "Parties"
+    ],
+    "Business": [
+      "Office Supplies",
+      "Software",
+      "Professional Services",
+      "Travel",
+      "Business Meals"
+    ],
+    "Pets": [
+      "Pet Food",
+      "Veterinary",
+      "Pet Supplies",
+      "Grooming",
+      "Pet Insurance"
+    ],
+    "Home & Garden": [
+      "Home Necessities",
+      "Home Décor",
+      "House Cleaning",
       "Bathroom",
       "Bedrooms",
       "Kitchen",
       "Tools/Hardware",
       "Storage",
       "Homeware",
-      "Subscriptions"
+      "Garden Supplies"
     ],
-    "Other": [
-      "Gifts",
-      "Taxes",
-      "Donations",
-      "Gatherings",
-      "Parties",
-      "Clothes",
-      "Shoes",
-      "Pets",
-      "Subscriptions",
-      "Fees",
-      "Reversal",
-      "Entertainment",
-      "Other"
-    ],
-    "Vacation": [
+    "Vacation & Travel": [
       "Flights/Travel",
       "Rental Car",
       "Airport",
@@ -111,6 +164,22 @@
       "Fees",
       "Shopping",
       "Necessities"
+    ],
+    "Miscellaneous": [
+      "Other",
+      "Uncategorized",
+      "Cash Withdrawals",
+      "Fees",
+      "Reversal",
+      "Taxes"
+    ],
+    "Income": [
+      "Primary Salary",
+      "Secondary Salary",
+      "Bonus",
+      "Investment Income",
+      "Side Hustle",
+      "Other Income"
     ]
   }
 }
