@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from PyQt6.QtGui import QFont
 from datetime import datetime
+from src.config import get_user_names
 
 class AssetEditDialog(QDialog):
     """Dialog for editing an existing asset"""
@@ -30,6 +31,9 @@ class AssetEditDialog(QDialog):
         """Initialize the UI"""
         layout = QVBoxLayout()
         
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
         # Title
         title = QLabel("Edit Asset Details")
         title.setFont(QFont("Arial", 16, QFont.Weight.Bold))
@@ -43,7 +47,7 @@ class AssetEditDialog(QDialog):
         # Person selector
         form_layout.addWidget(QLabel("Person:"), 0, 0)
         self.person_combo = QComboBox()
-        self.person_combo.addItems(["Jeff", "Vanessa", "Joint"])
+        self.person_combo.addItems([user_a_name, user_b_name, "Joint"])
         form_layout.addWidget(self.person_combo, 0, 1)
         
         # Asset type

@@ -172,25 +172,28 @@ class OverviewTab(QWidget):
             month = self.month_combo.currentIndex() + 1
             year = int(self.year_combo.currentText())
             
+            # Get user names from config
+            user_a_name, user_b_name = get_user_names()
+            
             # Get monthly summary from database
             summary = self.db.get_monthly_summary(year, month)
             
             # Update Income Card - use safe label access
-            jeff_income = summary['income'].get('Jeff', 0)
-            vanessa_income = summary['income'].get('Vanessa', 0)
-            total_income = jeff_income + vanessa_income
+            user_a_income = summary['income'].get(user_a_name, 0)
+            user_b_income = summary['income'].get(user_b_name, 0)
+            total_income = user_a_income + user_b_income
             
-            self._update_label("💵 Income", "Jeff's Income:", f"${jeff_income:,.2f}")
-            self._update_label("💵 Income", "Vanessa's Income:", f"${vanessa_income:,.2f}")
+            self._update_label("💵 Income", f"{user_a_name}'s Income:", f"${user_a_income:,.2f}")
+            self._update_label("💵 Income", f"{user_b_name}'s Income:", f"${user_b_income:,.2f}")
             self._update_label("💵 Income", "Total Income:", f"${total_income:,.2f}")
             
             # Update Expense Card
-            jeff_expenses = summary['expenses'].get('Jeff', 0)
-            vanessa_expenses = summary['expenses'].get('Vanessa', 0)
-            total_expenses = jeff_expenses + vanessa_expenses
+            user_a_expenses = summary['expenses'].get(user_a_name, 0)
+            user_b_expenses = summary['expenses'].get(user_b_name, 0)
+            total_expenses = user_a_expenses + user_b_expenses
             
-            self._update_label("💳 Expenses", "Jeff's Expenses:", f"${jeff_expenses:,.2f}")
-            self._update_label("💳 Expenses", "Vanessa's Expenses:", f"${vanessa_expenses:,.2f}")
+            self._update_label("💳 Expenses", f"{user_a_name}'s Expenses:", f"${user_a_expenses:,.2f}")
+            self._update_label("💳 Expenses", f"{user_b_name}'s Expenses:", f"${user_b_expenses:,.2f}")
             self._update_label("💳 Expenses", "Total Expenses:", f"${total_expenses:,.2f}")
             
             # Update Net Results Card

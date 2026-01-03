@@ -33,6 +33,7 @@ from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 import re
 from src.database.category_manager import get_category_manager
+from src.config import get_user_names
 
 class ExpenseLoader:
     """
@@ -282,10 +283,13 @@ class ExpenseLoader:
 
         # Assign category based on description
         category, subcategory = self._assign_category(description)
+        
+        # Get default user name
+        user_a_name, _ = get_user_names()
 
         return {
             'date': parsed_date.strftime('%Y-%m-%d'),
-            'person': 'Jeff',  # Default person - can be changed in preview
+            'person': user_a_name,  # Default person - can be changed in preview
             'amount': abs(amount),  # Always positive for expenses
             'description': description,
             'category': category,
@@ -409,7 +413,9 @@ class ExpenseLoader:
             date_str = match.group(1)
             description = match.group(2).strip()
             amount_str = match.group(3)
-            person = 'Jeff'  # Default person
+            # Get default user name
+            user_a_name, _ = get_user_names()
+            person = user_a_name  # Default person
 
             # Parse date directly (already has year)
             parsed_date = self._parse_date(date_str)
@@ -443,7 +449,9 @@ class ExpenseLoader:
             date_str = match.group(1)
             description = match.group(2).strip()
             amount_str = match.group(3)
-            person = 'Jeff'  # Default person
+            # Get default user name
+            user_a_name, _ = get_user_names()
+            person = user_a_name  # Default person
 
             # Extract month to intelligently infer the year
             month_str = date_str.split('/')[0]
@@ -496,9 +504,12 @@ class ExpenseLoader:
         date_str = parts[0]
         amount_str = parts[1]
         description = parts[2]
+        
+        # Get user names
+        user_a_name, user_b_name = get_user_names()
 
         # Optional person in 4th column
-        person = parts[3] if len(parts) > 3 else 'Jeff'
+        person = parts[3] if len(parts) > 3 else user_a_name
 
         # Parse date
         parsed_date = self._parse_date(date_str)
@@ -512,10 +523,15 @@ class ExpenseLoader:
 
         # Assign category
         category, subcategory = self._assign_category(description)
+        
+        # Validate person - use user_a_name as default if not valid
+        valid_persons = [user_a_name, user_b_name]
+        if person not in valid_persons:
+            person = user_a_name
 
         return {
             'date': parsed_date.strftime('%Y-%m-%d'),
-            'person': person if person in ['Jeff', 'Vanessa'] else 'Jeff',
+            'person': person,
             'amount': abs(amount),
             'description': description,
             'category': category,
@@ -645,6 +661,10 @@ class ExpenseLoader:
         """
         valid_expenses = []
         errors = []
+        
+        # Get valid user names
+        user_a_name, user_b_name = get_user_names()
+        valid_persons = [user_a_name, user_b_name]
 
         for i, expense in enumerate(expenses):
             expense_errors = []
@@ -656,7 +676,7 @@ class ExpenseLoader:
                 expense_errors.append("Missing description")
             if not expense.get('amount') or expense['amount'] <= 0:
                 expense_errors.append("Invalid amount")
-            if not expense.get('person') or expense['person'] not in ['Jeff', 'Vanessa']:
+            if not expense.get('person') or expense['person'] not in valid_persons:
                 expense_errors.append("Invalid person")
             if not expense.get('category'):
                 expense_errors.append("Missing category")

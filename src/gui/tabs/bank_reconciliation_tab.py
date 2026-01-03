@@ -25,6 +25,7 @@ from datetime import datetime
 import csv
 from src.database.db_manager import DatabaseManager
 from src.database.category_manager import get_category_manager
+from src.config import get_user_names
 
 class ImportTransactionDialog(QDialog):
     """Dialog for importing a bank transaction as income or expense"""
@@ -53,6 +54,9 @@ class ImportTransactionDialog(QDialog):
         info_group.setLayout(info_layout)
         layout.addWidget(info_group)
         
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
         # Import settings
         settings_group = QGroupBox(f"{self.transaction_type.title()} Settings")
         settings_layout = QFormLayout()
@@ -61,7 +65,7 @@ class ImportTransactionDialog(QDialog):
             # Person selector for income
             settings_layout.addRow("Person:", QLabel("For income imports"))
             self.person_combo = QComboBox()
-            self.person_combo.addItems(["Jeff", "Vanessa"])
+            self.person_combo.addItems([user_a_name, user_b_name])
             settings_layout.addRow("Assign to:", self.person_combo)
 
             # Source/description
@@ -71,7 +75,7 @@ class ImportTransactionDialog(QDialog):
         else:  # expense
             # Person selector for expense
             self.person_combo = QComboBox()
-            self.person_combo.addItems(["Jeff", "Vanessa"])
+            self.person_combo.addItems([user_a_name, user_b_name])
             settings_layout.addRow("Person:", self.person_combo)
 
             # Category selector
