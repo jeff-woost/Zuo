@@ -4,10 +4,10 @@ Main window for the budget application
 
 from PyQt6.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout,
-    QMenuBar, QMenu, QStatusBar, QMessageBox
+    QMenuBar, QMenu, QStatusBar, QMessageBox, QDialog, QLabel
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtGui import QAction, QIcon, QPixmap
 
 from src.gui.tabs.overview_tab import OverviewTab
 from src.gui.tabs.net_worth_tab import NetWorthTab
@@ -126,11 +126,37 @@ class MainWindow(QMainWindow):
             self.status_bar.showMessage("Data refreshed", 2000)
             
     def show_about(self):
-        """Show about dialog"""
-        QMessageBox.about(
-            self,
-            "About Zuo Budget Tracker",
-            "Zuo Budget Tracker v1.0\n\n"
-            "A comprehensive budget management application\n\n"
-            "© 2024 All rights reserved"
+        """Show about dialog with logo"""
+        import os
+        
+        dialog = QDialog(self)
+        dialog.setWindowTitle("About Zuo")
+        dialog.setFixedSize(400, 350)
+        
+        layout = QVBoxLayout(dialog)
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        # Logo
+        logo_path = os.path.join(os.path.dirname(__file__), "resources", "zuo_logo.png")
+        if os.path.exists(logo_path):
+            logo_label = QLabel()
+            pixmap = QPixmap(logo_path)
+            scaled_pixmap = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            logo_label.setPixmap(scaled_pixmap)
+            logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            layout.addWidget(logo_label)
+        
+        # App info
+        info_label = QLabel(
+            "<h2 style='color: #1e3a5f;'>Zuo Budget Tracker</h2>"
+            "<p style='color: #10b981; font-style: italic;'>Win with Money.</p>"
+            "<p>Version 1.0</p>"
+            "<p>A comprehensive budget management application<br>"
+            "for individuals, couples, and families.</p>"
+            "<p style='color: #64748b;'>© 2024 All rights reserved</p>"
         )
+        info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        info_label.setWordWrap(True)
+        layout.addWidget(info_label)
+        
+        dialog.exec()
