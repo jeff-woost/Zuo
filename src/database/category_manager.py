@@ -399,6 +399,187 @@ class CategoryManager:
             print(f"Error removing subcategory {category}/{subcategory}: {e}")
             return False
 
+    def rename_category(self, old_name: str, new_name: str) -> bool:
+        """
+        Rename an existing category.
+        
+        This updates the category name in both the database and in-memory cache,
+        and also updates all expenses using this category.
+        
+        Args:
+            old_name (str): Current category name
+            new_name (str): New category name
+            
+        Returns:
+            bool: True if renamed successfully, False otherwise
+        """
+        if not old_name or not new_name:
+            return False
+            
+        if old_name not in self._categories_data:
+            return False
+            
+        if new_name in self._categories_data:
+            print(f"Cannot rename: Category '{new_name}' already exists")
+            return False
+            
+        try:
+            with DatabaseManager() as db:
+                # Update all expenses using this category
+                db.execute('''
+                    UPDATE expenses 
+                    SET category = ? 
+                    WHERE category = ?
+                ''', (new_name, old_name))
+                
+                # Update all budget estimates using this category
+                db.execute('''
+                    UPDATE budget_estimates 
+                    SET category = ? 
+                    WHERE category = ?
+                ''', (new_name, old_name))
+                
+                # Update categories table
+                db.execute('''
+                    UPDATE categories 
+                    SET category = ? 
+                    WHERE category = ?
+                ''', (new_name, old_name))
+                
+                # Update in-memory storage
+                self._categories_data[new_name] = self._categories_data.pop(old_name)
+                return True
+                
+        except Exception as e:
+            print(f"Error renaming category {old_name} to {new_name}: {e}")
+            return False
+
+    def rename_subcategory(self, category: str, old_name: str, new_name: str) -> bool:
+        """
+        Rename an existing subcategory.
+        
+        This updates the subcategory name in both the database and in-memory cache,
+        and also updates all expenses using this subcategory.
+        
+        Args:
+            category (str): The main category
+            old_name (str): Current subcategory name
+            new_name (str): New subcategory name
+            
+        Returns:
+            bool: True if renamed successfully, False otherwise
+        """
+        if not category or not old_name or not new_name:
+            return False
+            
+        if category not in self._categories_data:
+            return False
+            
+        if old_name not in self._categories_data[category]:
+            return False
+            
+        if new_name in self._categories_data[category]:
+            print(f"Cannot rename: Subcategory '{new_name}' already exists in '{category}'")
+            return False
+            
+        try:
+            with DatabaseManager() as db:
+                # Update all expenses using this subcategory
+                db.execute('''
+                    UPDATE expenses 
+                    SET subcategory = ? 
+                    WHERE category = ? AND subcategory = ?
+                ''', (new_name, category, old_name))
+                
+                # Update all budget estimates using this subcategory
+                db.execute('''
+                    UPDATE budget_estimates 
+                    SET subcategory = ? 
+                    WHERE category = ? AND subcategory = ?
+                ''', (new_name, category, old_name))
+                
+                # Update categories table
+                db.execute('''
+                    UPDATE categories 
+                    SET subcategory = ? 
+                    WHERE category = ? AND subcategory = ?
+                ''', (new_name, category, old_name))
+                
+                # Update in-memory storage
+                idx = self._categories_data[category].index(old_name)
+                self._categories_data[category][idx] = new_name
+                return True
+                
+        except Exception as e:
+            print(f"Error renaming subcategory {category}/{old_name} to {new_name}: {e}")
+            return False
+
+    def delete_category(self, category: str) -> bool:
+        """
+        Delete a category (only if not used by any expenses).
+        
+        This method checks if the category is being used in any existing
+        expense records. Categories that are in use cannot be deleted to
+        maintain data integrity.
+        
+        Args:
+            category (str): The category to delete
+            
+        Returns:
+            bool: True if deleted successfully, False if in use or error occurred
+        """
+        if category not in self._categories_data:
+            return False
+            
+        try:
+            with DatabaseManager() as db:
+                # Check if category is used in expenses
+                usage_count = db.execute('''
+                    SELECT COUNT(*) as count FROM expenses
+                    WHERE category = ?
+                ''', (category,)).fetchone()
+                
+                if usage_count and usage_count['count'] > 0:
+                    print(f"Cannot delete category '{category}': still in use by {usage_count['count']} expense(s)")
+                    return False
+                
+                # Check if category is used in budget estimates
+                budget_count = db.execute('''
+                    SELECT COUNT(*) as count FROM budget_estimates
+                    WHERE category = ?
+                ''', (category,)).fetchone()
+                
+                if budget_count and budget_count['count'] > 0:
+                    print(f"Cannot delete category '{category}': still in use by {budget_count['count']} budget estimate(s)")
+                    return False
+                
+                # Remove from database
+                db.execute('''
+                    DELETE FROM categories 
+                    WHERE category = ?
+                ''', (category,))
+                
+                # Remove from in-memory storage
+                del self._categories_data[category]
+                return True
+                
+        except Exception as e:
+            print(f"Error deleting category {category}: {e}")
+            return False
+
+    def delete_subcategory(self, category: str, subcategory: str) -> bool:
+        """
+        Delete a subcategory (alias for remove_subcategory for consistency).
+        
+        Args:
+            category (str): The main category
+            subcategory (str): The subcategory to delete
+            
+        Returns:
+            bool: True if deleted successfully, False otherwise
+        """
+        return self.remove_subcategory(category, subcategory)
+
     def refresh_from_database(self):
         """
         Refresh categories from database.

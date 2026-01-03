@@ -40,6 +40,24 @@ class BudgetTab(QWidget):
         header_layout.addWidget(title)
         header_layout.addStretch()
         
+        # Add Manage Categories button
+        manage_categories_btn = QPushButton("⚙️ Manage Categories")
+        manage_categories_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #1e3a5f;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #2c5282;
+            }
+        """)
+        manage_categories_btn.clicked.connect(self.show_category_management)
+        header_layout.addWidget(manage_categories_btn)
+        
         layout.addLayout(header_layout)
         
         # Create sub-tabs for Income and Expenses
@@ -55,6 +73,23 @@ class BudgetTab(QWidget):
         
         layout.addWidget(self.sub_tabs)
         self.setLayout(layout)
+    
+    def show_category_management(self):
+        """Show the category management dialog"""
+        from src.gui.utils.category_management_dialog import CategoryManagementDialog
+        
+        dialog = CategoryManagementDialog(self)
+        dialog.categoriesChanged.connect(self.on_categories_changed)
+        dialog.exec()
+    
+    def on_categories_changed(self):
+        """Handle categories being changed"""
+        # Reload categories in both sub-tabs
+        self.income_tab.load_categories()
+        self.expenses_tab.load_categories()
+        
+        # Refresh the data to show any changes
+        self.refresh_data()
         
     def refresh_data(self):
         """Refresh data in both sub-tabs"""
@@ -230,6 +265,10 @@ class IncomeSubTab(QWidget):
         
         layout.addWidget(history_group)
         self.setLayout(layout)
+    
+    def load_categories(self):
+        """Stub method - Income tab doesn't use categories"""
+        pass
         
     def create_summary_card(self, title, value):
         """Create a summary card widget"""
