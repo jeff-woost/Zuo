@@ -363,9 +363,9 @@ def create_category_table(self, category, subcategories, actual_expenses, budget
     # User B's total
     user_b_total = QTableWidgetItem(f"${category_totals['user_b']:,.2f}")
     user_b_total.setFont(total_font)
-    vanessa_total.setBackground(QColor(230, 230, 230))
-    vanessa_total.setForeground(QColor(200, 50, 50))
-    table.setItem(totals_row, 3, vanessa_total)
+    user_b_total.setBackground(QColor(230, 230, 230))
+    user_b_total.setForeground(QColor(200, 50, 50))
+    table.setItem(totals_row, 3, user_b_total)
     
     # Actual total
     actual_total = QTableWidgetItem(f"${category_totals['actual']:,.2f}")
