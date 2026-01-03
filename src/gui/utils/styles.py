@@ -157,6 +157,57 @@ def get_app_stylesheet():
         color: #94a3b8;
     }
     
+    /* Secondary Button Variant - for Cancel, Clear actions */
+    QPushButton[variant="secondary"] {
+        background-color: #ffffff;
+        color: #1e3a5f;
+        border: 2px solid #e2e8f0;
+    }
+    
+    QPushButton[variant="secondary"]:hover {
+        background-color: #f1f5f9;
+        border-color: #1e3a5f;
+    }
+    
+    QPushButton[variant="secondary"]:pressed {
+        background-color: #e2e8f0;
+        border-color: #1e3a5f;
+    }
+    
+    /* Success Button Variant - for Save, Apply, Confirm actions */
+    QPushButton[variant="success"] {
+        background-color: #10b981;
+        border-color: #10b981;
+        color: #ffffff;
+    }
+    
+    QPushButton[variant="success"]:hover {
+        background-color: #059669;
+        border-color: #059669;
+    }
+    
+    QPushButton[variant="success"]:pressed {
+        background-color: #047857;
+        border-color: #047857;
+    }
+    
+    /* Danger Button Variant - for Delete, Remove actions */
+    QPushButton[variant="danger"] {
+        background-color: #ef4444;
+        border-color: #ef4444;
+        color: #ffffff;
+    }
+    
+    QPushButton[variant="danger"]:hover {
+        background-color: #dc2626;
+        border-color: #dc2626;
+    }
+    
+    QPushButton[variant="danger"]:pressed {
+        background-color: #b91c1c;
+        border-color: #b91c1c;
+    }
+    
     /* Input Fields - Form elements for user data entry */
     QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {
         background-color: #ffffff;

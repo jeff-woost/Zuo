@@ -42,6 +42,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from database.db_manager import DatabaseManager
 from database.models import ExpenseModel
+from src.config import get_user_names
 
 def get_user_choice():
     """
@@ -179,13 +180,16 @@ def clear_expenses_by_month(db, month, year):
 
         print(f"\n📊 Found {len(month_expenses)} expenses for {datetime(year, month, 1).strftime('%B %Y')}:")
 
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
         # Show summary by person with totals
-        jeff_total = sum(exp['amount'] for exp in month_expenses if exp['person'] == 'Jeff')
-        vanessa_total = sum(exp['amount'] for exp in month_expenses if exp['person'] == 'Vanessa')
+        user_a_total = sum(exp['amount'] for exp in month_expenses if exp['person'] == user_a_name)
+        user_b_total = sum(exp['amount'] for exp in month_expenses if exp['person'] == user_b_name)
 
-        print(f"   Jeff: {sum(1 for exp in month_expenses if exp['person'] == 'Jeff')} expenses, ${jeff_total:,.2f}")
-        print(f"   Vanessa: {sum(1 for exp in month_expenses if exp['person'] == 'Vanessa')} expenses, ${vanessa_total:,.2f}")
-        print(f"   Total: ${jeff_total + vanessa_total:,.2f}")
+        print(f"   {user_a_name}: {sum(1 for exp in month_expenses if exp['person'] == user_a_name)} expenses, ${user_a_total:,.2f}")
+        print(f"   {user_b_name}: {sum(1 for exp in month_expenses if exp['person'] == user_b_name)} expenses, ${user_b_total:,.2f}")
+        print(f"   Total: ${user_a_total + user_b_total:,.2f}")
 
         # Show sample expenses for user review
         print(f"\n📝 Sample expenses:")
@@ -245,13 +249,16 @@ def clear_all_expenses(db):
 
         print(f"\n📊 Found {total_count} total expenses in database")
 
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
         # Show comprehensive summary
-        jeff_total = sum(exp['amount'] for exp in all_expenses if exp['person'] == 'Jeff')
-        vanessa_total = sum(exp['amount'] for exp in all_expenses if exp['person'] == 'Vanessa')
+        user_a_total = sum(exp['amount'] for exp in all_expenses if exp['person'] == user_a_name)
+        user_b_total = sum(exp['amount'] for exp in all_expenses if exp['person'] == user_b_name)
 
-        print(f"   Jeff: {sum(1 for exp in all_expenses if exp['person'] == 'Jeff')} expenses, ${jeff_total:,.2f}")
-        print(f"   Vanessa: {sum(1 for exp in all_expenses if exp['person'] == 'Vanessa')} expenses, ${vanessa_total:,.2f}")
-        print(f"   Total: ${jeff_total + vanessa_total:,.2f}")
+        print(f"   {user_a_name}: {sum(1 for exp in all_expenses if exp['person'] == user_a_name)} expenses, ${user_a_total:,.2f}")
+        print(f"   {user_b_name}: {sum(1 for exp in all_expenses if exp['person'] == user_b_name)} expenses, ${user_b_total:,.2f}")
+        print(f"   Total: ${user_a_total + user_b_total:,.2f}")
 
         # Strong warning about destructive operation
         print(f"\n⚠️  WARNING: This will permanently delete ALL {total_count} expense records!")

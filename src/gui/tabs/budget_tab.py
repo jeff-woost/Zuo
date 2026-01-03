@@ -20,6 +20,7 @@ from src.gui.utils.expense_loader import ExpenseLoader
 from src.gui.utils.table_items import CurrencyTableWidgetItem, DateTableWidgetItem
 from src.gui.utils.advanced_filter_dialog import AdvancedFilterDialog
 from src.gui.utils.checkbox_styles import create_form_checkbox, create_table_checkbox
+from src.config import get_user_names
 
 class BudgetTab(QWidget):
     def __init__(self):
@@ -1066,7 +1067,8 @@ class ExpensesSubTab(QWidget):
 
             # Feature 1: Prompt user for who these expenses are for
             from PyQt6.QtWidgets import QInputDialog
-            persons = ["Jeff", "Vanessa"]
+            user_a_name, user_b_name = get_user_names()
+            persons = [user_a_name, user_b_name]
             default_person, ok = QInputDialog.getItem(
                 self,
                 "Who are these expenses for?",

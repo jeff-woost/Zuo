@@ -11,6 +11,7 @@ from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from PyQt6.QtGui import QFont
 from datetime import datetime, timedelta
 import re
+from src.config import get_user_names
 
 class AdvancedFilterDialog(QDialog):
     """Advanced filtering dialog for table data"""
@@ -130,21 +131,28 @@ class AdvancedFilterDialog(QDialog):
 
         # Person Filter (if applicable)
         if self.filter_type in ["expenses", "income"]:
+            # Get user names from config
+            user_a_name, user_b_name = get_user_names()
+            
             person_group = QGroupBox("Person Filter")
             person_layout = QHBoxLayout()
 
             self.person_all = QCheckBox("All")
             self.person_all.setChecked(True)
-            self.person_jeff = QCheckBox("Jeff")
-            self.person_vanessa = QCheckBox("Vanessa")
+            self.person_user_a = QCheckBox(user_a_name)
+            self.person_user_b = QCheckBox(user_b_name)
+            
+            # Store user names for later use
+            self.user_a_name = user_a_name
+            self.user_b_name = user_b_name
 
             self.person_all.toggled.connect(self.on_person_all_toggled)
-            self.person_jeff.toggled.connect(self.on_person_individual_toggled)
-            self.person_vanessa.toggled.connect(self.on_person_individual_toggled)
+            self.person_user_a.toggled.connect(self.on_person_individual_toggled)
+            self.person_user_b.toggled.connect(self.on_person_individual_toggled)
 
             person_layout.addWidget(self.person_all)
-            person_layout.addWidget(self.person_jeff)
-            person_layout.addWidget(self.person_vanessa)
+            person_layout.addWidget(self.person_user_a)
+            person_layout.addWidget(self.person_user_b)
             person_layout.addStretch()
 
             person_group.setLayout(person_layout)
@@ -251,14 +259,14 @@ class AdvancedFilterDialog(QDialog):
     def on_person_all_toggled(self, checked):
         """Handle 'All' checkbox for person filter"""
         if checked:
-            self.person_jeff.setChecked(False)
-            self.person_vanessa.setChecked(False)
+            self.person_user_a.setChecked(False)
+            self.person_user_b.setChecked(False)
 
     def on_person_individual_toggled(self):
         """Handle individual person checkboxes"""
-        if self.person_jeff.isChecked() or self.person_vanessa.isChecked():
+        if self.person_user_a.isChecked() or self.person_user_b.isChecked():
             self.person_all.setChecked(False)
-        elif not self.person_jeff.isChecked() and not self.person_vanessa.isChecked():
+        elif not self.person_user_a.isChecked() and not self.person_user_b.isChecked():
             self.person_all.setChecked(True)
 
     def clear_filters(self):
@@ -305,10 +313,10 @@ class AdvancedFilterDialog(QDialog):
         if hasattr(self, 'person_all'):
             if not self.person_all.isChecked():
                 selected_persons = []
-                if self.person_jeff.isChecked():
-                    selected_persons.append("Jeff")
-                if self.person_vanessa.isChecked():
-                    selected_persons.append("Vanessa")
+                if self.person_user_a.isChecked():
+                    selected_persons.append(self.user_a_name)
+                if self.person_user_b.isChecked():
+                    selected_persons.append(self.user_b_name)
                 if selected_persons:
                     filters['persons'] = selected_persons
 

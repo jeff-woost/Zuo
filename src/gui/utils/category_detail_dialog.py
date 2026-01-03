@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QDate
 from PyQt6.QtGui import QFont, QColor
 from datetime import datetime
+from src.config import get_user_names
 
 
 class ExpenseDetailsDialog(QDialog):
@@ -188,8 +189,11 @@ class ExpenseDetailsDialog(QDialog):
                 self.expenses_table.setItem(i, 5, realized_item)
 
                 # Calculate totals
+                # Get user names from config
+                user_a_name, user_b_name = get_user_names()
+                
                 total_amount += amount
-                if expense['person'] == 'Jeff':
+                if expense['person'] == user_a_name:
                     jeff_amount += amount
                 else:
                     vanessa_amount += amount
@@ -197,8 +201,8 @@ class ExpenseDetailsDialog(QDialog):
             # Update summary
             summary_text = (
                 f"Total Expenses: ${total_amount:,.2f}  |  "
-                f"Jeff: ${jeff_amount:,.2f}  |  "
-                f"Vanessa: ${vanessa_amount:,.2f}  |  "
+                f"{user_a_name}: ${jeff_amount:,.2f}  |  "
+                f"{user_b_name}: ${vanessa_amount:,.2f}  |  "
                 f"Count: {len(expenses)} expense(s)"
             )
             self.summary_label.setText(summary_text)
@@ -256,6 +260,9 @@ class CategoryDetailDialog(QDialog):
         # Create table widget
         self.table = QTableWidget()
 
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
         # Configure table based on data type
         if self.data_type == 'budget_estimates':
             self.table.setColumnCount(3)
@@ -265,7 +272,7 @@ class CategoryDetailDialog(QDialog):
         else:  # budget_vs_actual
             self.table.setColumnCount(6)
             self.table.setHorizontalHeaderLabels([
-                "Subcategory", "Estimate", "Jeff's Expenses", "Vanessa's Expenses", "Total Actual", "Variance"
+                "Subcategory", "Estimate", f"{user_a_name}'s Expenses", f"{user_b_name}'s Expenses", "Total Actual", "Variance"
             ])
 
         # Style the table
@@ -306,13 +313,13 @@ class CategoryDetailDialog(QDialog):
         else:  # budget_vs_actual
             header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)  # Subcategory
             header.setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)    # Estimate
-            header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)    # Jeff
-            header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)    # Vanessa
+            header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)    # User A
+            header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)    # User B
             header.setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)    # Total
             header.setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)    # Variance
             self.table.setColumnWidth(1, 120)  # Estimate
-            self.table.setColumnWidth(2, 130)  # Jeff
-            self.table.setColumnWidth(3, 130)  # Vanessa
+            self.table.setColumnWidth(2, 130)  # User A
+            self.table.setColumnWidth(3, 130)  # User B
             self.table.setColumnWidth(4, 120)  # Total
             self.table.setColumnWidth(5, 120)  # Variance
 
@@ -526,11 +533,14 @@ class CategoryDetailDialog(QDialog):
             ORDER BY subcategory, person
         ''', (month_start, month_end, self.category))
 
+        # Get user names from config
+        user_a_name, user_b_name = get_user_names()
+        
         actual_expenses = {}
         for row in cursor.fetchall():
             key = row['subcategory']
             if key not in actual_expenses:
-                actual_expenses[key] = {'Jeff': 0, 'Vanessa': 0}
+                actual_expenses[key] = {user_a_name: 0, user_b_name: 0}
             actual_expenses[key][row['person']] = row['total']
 
         # Get budget estimates
@@ -557,21 +567,21 @@ class CategoryDetailDialog(QDialog):
             self.table.setItem(i, 1, QTableWidgetItem(f"${estimate:,.2f}"))
 
             # Get actual expenses
-            jeff_actual = actual_expenses.get(subcategory, {}).get('Jeff', 0)
-            vanessa_actual = actual_expenses.get(subcategory, {}).get('Vanessa', 0)
-            total_actual = jeff_actual + vanessa_actual
+            user_a_actual = actual_expenses.get(subcategory, {}).get(user_a_name, 0)
+            user_b_actual = actual_expenses.get(subcategory, {}).get(user_b_name, 0)
+            total_actual = user_a_actual + user_b_actual
 
-            # Jeff's expenses
-            jeff_item = QTableWidgetItem(f"${jeff_actual:,.2f}")
-            if jeff_actual > 0:
-                jeff_item.setForeground(QColor(200, 50, 50))  # Red for expenses
-            self.table.setItem(i, 2, jeff_item)
+            # User A's expenses
+            user_a_item = QTableWidgetItem(f"${user_a_actual:,.2f}")
+            if user_a_actual > 0:
+                user_a_item.setForeground(QColor(200, 50, 50))  # Red for expenses
+            self.table.setItem(i, 2, user_a_item)
 
-            # Vanessa's expenses
-            vanessa_item = QTableWidgetItem(f"${vanessa_actual:,.2f}")
-            if vanessa_actual > 0:
-                vanessa_item.setForeground(QColor(200, 50, 50))  # Red for expenses
-            self.table.setItem(i, 3, vanessa_item)
+            # User B's expenses
+            user_b_item = QTableWidgetItem(f"${user_b_actual:,.2f}")
+            if user_b_actual > 0:
+                user_b_item.setForeground(QColor(200, 50, 50))  # Red for expenses
+            self.table.setItem(i, 3, user_b_item)
 
             # Total actual
             total_item = QTableWidgetItem(f"${total_actual:,.2f}")

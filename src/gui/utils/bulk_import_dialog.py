@@ -38,6 +38,7 @@ from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
 from typing import List, Dict
 from src.database.category_manager import get_category_manager
+from src.config import get_user_names
 
 class CustomComboBox(QComboBox):
     """
@@ -599,14 +600,16 @@ class BulkImportPreviewDialog(QDialog):
             self.table.setItem(row, 1, date_item)
 
             # Person with improved styling for better visibility
+            # Get user names from config
+            user_a_name, user_b_name = get_user_names()
             person_combo = QComboBox()
-            person_combo.addItems(["Jeff", "Vanessa"])
+            person_combo.addItems([user_a_name, user_b_name])
             # Feature 1: Use default_person if provided (always override loader default)
-            # The expense loader defaults to 'Jeff', so we override when user selected someone else
+            # The expense loader defaults to first user, so we override when user selected someone else
             if self.default_person:
                 person_to_set = self.default_person
             else:
-                person_to_set = expense.get('person', 'Jeff')
+                person_to_set = expense.get('person', user_a_name)
             person_combo.setCurrentText(person_to_set)
             person_combo.setStyleSheet("""
                 QComboBox {
